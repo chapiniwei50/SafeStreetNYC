@@ -20,6 +20,7 @@ var getHomepage = function (req, res) {
 
 //for results if the username and password are correct
 var postResultsUser = function (req, res) {
+    console.log("here");
   req.session.currWall = null;
   var usernameCheck = req.body.username;
   var passwordCheck = req.body.password;

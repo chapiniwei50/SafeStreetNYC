@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const config = require('./config');
 const routes = require('./routes');
+const routesDDB = require('./routesDDB');
 
 const app = express();
 app.use(cors({
@@ -15,7 +16,17 @@ app.get('/getneighborhooddemographics/:neighborhood', routes.getneighborhooddemo
 app.get('/gethospitaltype', routes.gethospitaltype);
 app.get('/getlocalhospitals', routes.getlocalhospitals);
 
-app.get('/authenticator', routesDDB.postResultsUser);
+app.get('/authenticator', routesDDB.verifyUser);
+
+// app.get('/author/:type', routes.author);
+// app.get('/random', routes.random);
+// app.get('/song/:song_id', routes.song);
+// app.get('/album/:album_id', routes.album);
+// app.get('/albums', routes.albums);
+// app.get('/album_songs/:album_id', routes.album_songs);
+// app.get('/top_songs', routes.top_songs);
+// app.get('/top_albums', routes.top_albums);
+// app.get('/search_songs', routes.search_songs);
 
 
 app.listen(config.server_port, () => {

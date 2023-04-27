@@ -7,8 +7,8 @@ function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("hello");
-    fetch(`/authenticator`);
+    console.log("fetching");
+    fetch(`http://${config.server_host}:${config.server_port}/authenticator`);
   }
 
   return (
