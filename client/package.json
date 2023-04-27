@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.321.1",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@mui/material": "^5.11.1",
@@ -14,7 +15,8 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.6.1",
     "react-scripts": "5.0.1",
-    "recharts": "^2.2.0"
+    "recharts": "^2.2.0",
+    "sjcl": "^1.0.8"
   },
   "scripts": {
     "start": "react-scripts start",
