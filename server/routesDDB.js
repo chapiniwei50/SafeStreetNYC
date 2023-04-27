@@ -3,7 +3,6 @@ const sjcl = require('sjcl');
 
 // TODO The code for your own routes should go here
 var getMain = function (req, res) {
-  req.session.currWall = null;
   req.session.isVerified = false;
   res.render('main.ejs');
 }
@@ -11,7 +10,6 @@ var getMain = function (req, res) {
 //render homepage
 //NEW: getHomepage, homepage.ejs
 var getHomepage = function (req, res) {
-  req.session.currWall = null;
   if (!req.session.username) {
     return res.redirect('/')
   }
@@ -20,33 +18,29 @@ var getHomepage = function (req, res) {
 
 //for results if the username and password are correct
 var postResultsUser = function (req, res) {
-    console.log("here");
-  req.session.currWall = null;
-  var usernameCheck = req.body.username;
-  var passwordCheck = req.body.password;
-  var hashPassword = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(passwordCheck));
+  var usernameCheck = req.query.email;
+  var hashPassword = req.query.password;
+  console.log(usernameCheck + " " + hashPassword);
+//   var hashPassword = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(passwordCheck));
   db.passwordLookup(usernameCheck, function (err, data) {
     if (data == hashPassword && !err) {
-      req.session.username = req.body.username;
-      req.session.password = req.body.password;
+      req.session.username = req.query.email;
+      req.session.password = req.query.password;
       req.session.isVerified = true;
-      res.render('checklogin.ejs', { "check": req.session.isVerified });
     } else {
       req.session.isVerified = false;
-      res.render('checklogin.ejs', { "check": req.session.isVerified });
     }
+    res.send({ "check": req.session.isVerified });
   });
 }
 
 //gets signup page
 var getSignup = function (req, res) {
-  req.session.currWall = null;
   res.render('signup.ejs', { "check": req.session.isVerified });
 }
 
 //gets logout page
 var getLogout = function (req, res) {
-  req.session.currWall = null;
   req.session.isVerified = false;
   res.render('main.ejs', {});
       req.session.username = null;

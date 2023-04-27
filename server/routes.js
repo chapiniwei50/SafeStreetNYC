@@ -167,9 +167,147 @@ const getlocalhospitals = async function(req, res) {
   });
 }
 
+// GET /getrankhousing
+const getrankhousing = async function(req, res) {
+  const dataList = [];
+  const healthcare_weight = req.query.Healthcare_Weight ?? 0;
+  const safety_weight = req.query.Safety_Weight ?? 0;
+  const price_weight = req.query.Price_Weight ?? 0;
+  const neighborhood = req.query.Neighborhood;
+
+  connection.query(`
+  WITH neighborhood_housing AS (
+      SELECT Address, Latitude, Longitude, Sale_Price
+      FROM Property_Sales
+      WHERE Neighborhood LIKE '%${neighborhood}%' AND Sale_Price != 0
+      GROUP BY Latitude, Longitude
+  ),
+  rank_temp_crimes AS (
+      SELECT COUNT(N.Address) AS crimes_count, N.Address
+      FROM neighborhood_housing N LEFT JOIN Crimes2 C ON (POW((N.Latitude - (C.Latitude)) * 111320, 2)
+          + POW((N.Longitude - (C.Longitude)) * 84100, 2)) < POW(1000,2)
+      GROUP BY N.Latitude, N.Longitude, N.Address
+  ),
+  rank_crimes AS (
+      SELECT *, NTILE(10) OVER (ORDER BY crimes_count DESC) AS group_col
+      FROM rank_temp_crimes
+  ),
+  rank_temp_healthcare AS (
+      SELECT COUNT(H.Name) AS healthcare_count, N.Address
+      FROM neighborhood_housing N LEFT JOIN Hospitals H ON (POW((N.Latitude - (H.Latitude)) * 111320, 2)
+          + POW((N.Longitude - (H.Longitude)) * 84100, 2)) < POW(1000,2)
+      GROUP BY N.Latitude, N.Longitude, N.Address
+  ),
+  rank_healthcare AS (
+      SELECT *, NTILE(10) OVER (ORDER BY healthcare_count ASC) AS group_col
+      FROM rank_temp_healthcare
+  ),
+  rank_temp_price AS (
+      SELECT Sale_Price, Address
+      FROM neighborhood_housing
+  ),
+  rank_price AS(
+      SELECT *, NTILE(10) OVER (ORDER BY Sale_Price DESC) AS group_col
+      FROM rank_temp_price
+  )
+  SELECT RC.Address, (RC.group_col * ${safety_weight} + RH.group_col * ${healthcare_weight} + RP.group_col * ${price_weight}) AS Total_Rank,
+        RC.group_col AS rank_crime, RH.group_col AS rank_healthcare, RP.group_col AS rank_price
+  FROM (rank_crimes RC JOIN rank_healthcare RH ON RC.Address = RH.Address)
+          JOIN rank_price RP ON RC.Address = RP.Address
+  ORDER BY rank_address DESC;
+    `, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      for(let i = 0; i < data.length; i++) {
+        let obj = {
+          Address: data[i].Address,
+          Rank_Address: data[i].Rank_Address,
+          Rank_Crime: data[i].Rank_Crime,
+          Rank_Healthcare: data[i].Rank_Healthcare,
+          Rank_Price: data[i].Rank_Price
+        }
+        dataList.push(obj);
+      }
+      res.json(dataList);
+    }
+  });
+}
+
+// GET /getrankairbnb
+const getrankairbnb = async function(req, res) {
+  const dataList = [];
+  const healthcare_weight = req.query.Healthcare_Weight ?? 0;
+  const safety_weight = req.query.Safety_Weight ?? 0;
+  const price_weight = req.query.Price_Weight ?? 0;
+  const neighborhood = req.query.Neighborhood;
+
+  connection.query(`
+    WITH neighborhood_housing AS (
+      SELECT Property_Id, Latitude, Longitude, (Price + Service_Fee) AS Airbnb_Price
+      FROM Airbnb
+      WHERE UPPER(Neighborhood) LIKE '%${neighborhood}%' AND (Price + Service_Fee) != 0
+      GROUP BY Latitude, Longitude
+    ),
+    rank_temp_crimes AS (
+        SELECT COUNT(N.Property_Id) AS crimes_count, N.Property_Id
+        FROM neighborhood_housing N LEFT JOIN Crimes2 C ON (POW((N.Latitude - (C.Latitude)) * 111320, 2)
+            + POW((N.Longitude - (C.Longitude)) * 84100, 2)) < POW(1000,2)
+        GROUP BY N.Latitude, N.Longitude, N.Property_Id
+    ),
+    rank_crimes AS (
+        SELECT *, NTILE(10) OVER (ORDER BY crimes_count DESC) AS group_col
+        FROM rank_temp_crimes
+    ),
+    rank_temp_healthcare AS (
+        SELECT COUNT(H.Name) AS healthcare_count, N.Property_Id
+        FROM neighborhood_housing N LEFT JOIN Hospitals H ON (POW((N.Latitude - (H.Latitude)) * 111320, 2)
+            + POW((N.Longitude - (H.Longitude)) * 84100, 2)) < POW(1000,2)
+        GROUP BY N.Latitude, N.Longitude, N.Property_Id
+    ),
+    rank_healthcare AS (
+        SELECT *, NTILE(10) OVER (ORDER BY healthcare_count ASC) AS group_col
+        FROM rank_temp_healthcare
+    ),
+    rank_temp_price AS (
+        SELECT Airbnb_Price, Property_Id
+        FROM neighborhood_housing
+    ),
+    rank_price AS(
+        SELECT *, NTILE(10) OVER (ORDER BY Airbnb_Price DESC) AS group_col
+        FROM rank_temp_price
+    )
+    SELECT RC.Property_Id as Property_Id, (RC.group_col * ${safety_weight} + RH.group_col * ${healthcare_weight} + RP.group_col * ${price_weight}) AS Total_Rank,
+          RC.group_col AS Rank_Crime, RH.group_col AS Rank_Healthcare, RP.group_col AS Rank_Price
+    FROM (rank_crimes RC JOIN rank_healthcare RH ON RC.Property_Id = RH.Property_Id)
+            JOIN rank_price RP ON RC.Property_Id = RP.Property_Id
+    ORDER BY rank_address DESC;
+    `, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      for(let i = 0; i < data.length; i++) {
+        let obj = {
+          Property_Id: data[i].Property_Id,
+          Rank_Address: data[i].Rank_Address,
+          Rank_Crime: data[i].Rank_Crime,
+          Rank_Healthcare: data[i].Rank_Healthcare,
+          Rank_Price: data[i].Rank_Price
+        }
+        dataList.push(obj);
+      }
+      res.json(dataList);
+    }
+  });
+}
+
 module.exports = {
   getlocalcrime,
   getneighborhooddemographics,
   gethospitaltype,
-  getlocalhospitals
+  getlocalhospitals,
+  getrankhousing,
+  getrankairbnb
 }

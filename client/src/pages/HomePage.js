@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import './Login.css';
+const config = require('../config.json');
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("fetching");
-    fetch(`http://${config.server_host}:${config.server_port}/authenticator`);
-  }
+    e.preventDefault()
+    fetch(`http://${config.server_host}:${config.server_port}/authenticator`, {
+      method: 'POST', 
+      mode: 'cors', 
+      body: JSON.stringify(email)})
+  };
 
   return (
     <div className="login-container">

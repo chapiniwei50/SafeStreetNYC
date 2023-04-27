@@ -9,12 +9,22 @@ app.use(cors({
   origin: '*',
 }));
 
+var session = require('express-session');
+app.use(session({
+   secret: 'loginSecret',
+   resave: false,
+   saveUnitialized: true,
+   cookie: { secure: false }
+}));
+
 // We use express to define our various API endpoints and
 // provide their handlers that we implemented in routes.js
 app.get('/getlocalcrime', routes.getlocalcrime);
 app.get('/getneighborhooddemographics/:neighborhood', routes.getneighborhooddemographics);
 app.get('/gethospitaltype', routes.gethospitaltype);
 app.get('/getlocalhospitals', routes.getlocalhospitals);
+app.get('/getrankhousing', routes.getrankhousing);
+app.get('/getrankairbnb', routes.getrankairbnb);
 
 app.get('/authenticator', routesDDB.verifyUser);
 

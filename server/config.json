@@ -1,8 +1,8 @@
 {
-  "rds_host": "",
+  "rds_host": "finalproject.cujum7hj0tiz.us-east-1.rds.amazonaws.com",
   "rds_port": "3306",
-  "rds_user": "",
-  "rds_password" : "",
+  "rds_user": "admin",
+  "rds_password" : "adminadmin",
   "rds_db": "FINAL_PROJECT",
   "server_host": "localhost",
   "server_port":"8080"
