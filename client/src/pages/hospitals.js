@@ -17,11 +17,8 @@ export default function SongsPage() {
   const [data, setData] = useState([]);
   // const [selectedNeighborhood, setSelectedNeighborhood] = useState(null);
 
-  const [neighborhood, setNeighborhood] = useState('');
-  const [healthcare, setHealthcare] = useState(3);
-  const [safety, setSafety] = useState(3);
-  const [price, setPrice] = useState(3);
-
+  const [hospital_type, setHospitalType] = useState('');
+ 
 
 
 
@@ -94,26 +91,14 @@ export default function SongsPage() {
   const search = () => {
     console.log("search")
     
-    // fetch(`http://${config.server_host}:${config.server_port}/getrankhousing?Neighborhood=${neighborhood}` +
-    //   `&Healthcare_Weight=${healthcare}` +
-    //    `&Safety_Weight=${safety}` +
-    //    `&Price_Weight=${price}` 
-    // )
-    //   .then(res => res.json())
-    //   .then(housings => {
-    //     console.log(housings);
-    //     console.log("effect here")
-    //     setData(housings);
-    //     console.log(data);
-    //   });
-
-    fetch(`http://${config.server_host}:${config.server_port}/getneighborhooddemographics?Neighborhood=${neighborhood}` 
+    fetch(`http://${config.server_host}:${config.server_port}/gethospitaltype?Facility_Type=${hospital_type}`
     )
       .then(res => res.json())
-      .then(demographics => {
-        console.log(demographics);
+      .then(hospitals => {
+        console.log(hospitals);
         console.log("effect here")
-        
+        setData(hospitals);
+        console.log(data);
       });
   }
 
@@ -126,23 +111,12 @@ export default function SongsPage() {
     // { field: 'neighborhood', headerName: 'Neighborhood', width: 300, renderCell: (params) => (
     //     <Link onClick={() => setSelectedNeighborhood(params.row.song_id)}>{params.value}</Link>
     // ) },
-    { field: 'neighborhood', headerName: 'Address', width: 300 },
-    { field: 'healthcare', headerName: 'Healthcare Rank', width: 200 },
-    { field: 'safety', headerName: 'Safety Rank', width: 200 },
-    { field: 'price', headerName: 'Price Rank', width: 200 },
+    { field: 'Name', headerName: 'Name', width: 400 },
+    { field: 'Location', headerName: 'Location', width: 300 },
+    { field: 'Phone', headerName: 'Phone', width: 300 },
     
-  ];
-  const rows = [
-    // { field: 'neighborhood', headerName: 'Neighborhood', width: 300, renderCell: (params) => (
-    //     <Link onClick={() => setSelectedNeighborhood(params.row.song_id)}>{params.value}</Link>
-    // ) },
-    { id: 'Baruch Houses Family Health Center', Name: 'hey', Location: 'yay', Phone: 'f' },
-    { id: 'Aaruch Houses Family Health Center', Name: 'hey', Location: 'yay', Phone: 'f' },
-    { id: 'Caruch Houses Family Health Center', Name: 'hey', Location: 'yay', Phone: 'f' },
   ]
-
-
-
+  
   
   const apikey = 'AIzaSyBiQxXOFhKyV-xlXCyFoBAIgshY5UhM7i8';
 
@@ -157,49 +131,13 @@ export default function SongsPage() {
     <Container>
       
       {/* {selectedNeighborhood && <SongCard neighborhood={selectedNeighborhood} handleClose={() => setSelectedNeighborhood(null)} />} */}
-      <h2>Search Neighborhood</h2>
+      <h2>Search Hospital Type</h2>
       <Grid container spacing={6}>
         <Grid item xs={12}>
-          <TextField label='Neighborhood' value={neighborhood} onChange={(e) => setNeighborhood(e.target.value)} style={{ width: "100%" }}/>
+          <TextField label='Hospital Type' value={hospital_type} onChange={(e) => setHospitalType(e.target.value)} style={{ width: "100%" }}/>
         </Grid>
         
-        <Grid item xs={4}>
-          <p>Healthcare</p>
-          <Slider
-            value={healthcare}
-            min={0}
-            max={10}
-            step={1}
-            onChange={(e, newValue) => setHealthcare(newValue)}
-            valueLabelDisplay='auto'
-            valueLabelFormat={value => <div>{value}</div>}
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <p>Safety</p>
-          <Slider
-            value={safety}
-            min={0}
-            max={10}
-            step={1}
-            onChange={(e, newValue) => setSafety(newValue)}
-            valueLabelDisplay='auto'
-            valueLabelFormat={value => <div>{value}</div>}
-          />
-        </Grid>
-
-        <Grid item xs={4}>
-          <p>Price</p>
-          <Slider
-            value={price}
-            min={0}
-            max={10}
-            step={1}
-            onChange={(e, newValue) => setPrice(newValue)}
-            valueLabelDisplay='auto'
-            valueLabelFormat={value => <div>{value}</div>}
-          />
-        </Grid>
+       
         {/* TODO (TASK 24): add sliders for danceability, energy, and valence (they should be all in the same row of the Grid) */}
         {/* Hint: consider what value xs should be to make them fit on the same row. Set max, min, and a reasonable step. Is valueLabelFormat is necessary? */}
        
@@ -211,7 +149,7 @@ export default function SongsPage() {
         Search
       </Button>
       
-      <div><h1>My Map</h1><Map apikey ={apikey}/></div>
+      {/* <div><h1>My Map</h1><Map apikey ={apikey}/></div> */}
 
 
       <h2>Results</h2>

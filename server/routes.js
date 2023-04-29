@@ -45,10 +45,12 @@ const getlocalcrime = async function(req, res) {
   });
 }
 
-// GET /getneighborhooddemographics/:neighborhood
+// GET /getneighborhooddemographics
 const getneighborhooddemographics = async function(req, res) {
-  const neighborhood = req.params.neighborhood;
+  console.log("in get neghborhood dem")
+  const neighborhood = req.query.Neighborhood;
   const dataList = [];
+  console.log(neighborhood);
 
   connection.query(`
     WITH airbnb AS (
@@ -86,19 +88,20 @@ const getneighborhooddemographics = async function(req, res) {
       res.json({});
     } else {
       for(let i = 0; i < data.length; i++) {
-        let obj = {
-          neighborhood: data[i].neighborhood,
-          PCT_Male: data[i].PCT_Male,
-          PCT_Female: data[i].PCT_Female,
-          PCT_American_Indian: data[i].PCT_American_Indian,
-          PCT_Asian: data[i].PCT_Asian,
-          PCT_Black: data[i].PCT_Black,
-          PCT_Latino: data[i].PCT_Latino,
-          PCT_Pacific_Islander: data[i].PCT_Pacific_Islander,
-          PCT_White: data[i].PCT_White,
-          PCT_Other_Ethnicity: data[i].PCT_Other_Ethnicity
-        }
-        dataList.push(obj);
+        console.log(data[i])
+        // let obj = {
+        //   neighborhood: data[i].neighborhood,
+        //   PCT_Male: data[i].PCT_Male,
+        //   PCT_Female: data[i].PCT_Female,
+        //   PCT_American_Indian: data[i].PCT_American_Indian,
+        //   PCT_Asian: data[i].PCT_Asian,
+        //   PCT_Black: data[i].PCT_Black,
+        //   PCT_Latino: data[i].PCT_Latino,
+        //   PCT_Pacific_Islander: data[i].PCT_Pacific_Islander,
+        //   PCT_White: data[i].PCT_White,
+        //   PCT_Other_Ethnicity: data[i].PCT_Other_Ethnicity
+        // }
+        // dataList.push(obj);
       }
       res.json(dataList);
     }
@@ -107,9 +110,10 @@ const getneighborhooddemographics = async function(req, res) {
 
 // GET /gethospitaltype
 const gethospitaltype = async function(req, res) {
+  console.log("in get hospital type")
   const dataList = [];
-  const facility_type = req.query. Facility_Type;
-
+  const facility_type = req.query.Facility_Type;
+  console.log(facility_type);
   connection.query(`
       SELECT Name, Location, Phone, Latitude, Longitude
       FROM Hospitals
@@ -121,6 +125,7 @@ const gethospitaltype = async function(req, res) {
     } else {
       for(let i = 0; i < data.length; i++) {
         let obj = {
+          id: data[i].Name,
           Name: data[i].Name,
           Location: data[i].Location,
           Phone: data[i].Phone,
@@ -169,12 +174,16 @@ const getlocalhospitals = async function(req, res) {
 
 // GET /getrankhousing
 const getrankhousing = async function(req, res) {
+  console.log("in get rank housing")
   const dataList = [];
   const healthcare_weight = req.query.Healthcare_Weight ?? 0;
   const safety_weight = req.query.Safety_Weight ?? 0;
   const price_weight = req.query.Price_Weight ?? 0;
   const neighborhood = req.query.Neighborhood ?? '';
-
+  console.log(healthcare_weight);
+  console.log(safety_weight);
+  console.log(price_weight);
+  console.log(neighborhood);
   connection.query(`
   WITH neighborhood_housing AS (
       SELECT Address, Latitude, Longitude, Sale_Price
@@ -214,19 +223,22 @@ const getrankhousing = async function(req, res) {
         RC.group_col AS rank_crime, RH.group_col AS rank_healthcare, RP.group_col AS rank_price
   FROM (rank_crimes RC JOIN rank_healthcare RH ON RC.Address = RH.Address)
           JOIN rank_price RP ON RC.Address = RP.Address
-  ORDER BY rank_address DESC;
+  ORDER BY Total_Rank DESC;
     `, (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
       res.json({});
     } else {
       for(let i = 0; i < data.length; i++) {
+        console.log(data[i]);
         let obj = {
+          id:  data[i].Address,
           Address: data[i].Address,
-          Rank_Address: data[i].Rank_Address,
-          Rank_Crime: data[i].Rank_Crime,
-          Rank_Healthcare: data[i].Rank_Healthcare,
-          Rank_Price: data[i].Rank_Price
+          Rank_Address: data[i].Total_Rank,
+          Rank_Crime: data[i].rank_crime,
+          Rank_Healthcare: data[i].rank_healthcare,
+          Rank_Price: data[i].rank_price
+       
         }
         dataList.push(obj);
       }
@@ -282,7 +294,7 @@ const getrankairbnb = async function(req, res) {
           RC.group_col AS Rank_Crime, RH.group_col AS Rank_Healthcare, RP.group_col AS Rank_Price
     FROM (rank_crimes RC JOIN rank_healthcare RH ON RC.Property_Id = RH.Property_Id)
             JOIN rank_price RP ON RC.Property_Id = RP.Property_Id
-    ORDER BY rank_address DESC;
+    ORDER BY Total_Rank DESC;
     `, (err, data) => {
     if (err || data.length === 0) {
       console.log(err);

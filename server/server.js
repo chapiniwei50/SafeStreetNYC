@@ -20,7 +20,7 @@ app.use(session({
 // We use express to define our various API endpoints and
 // provide their handlers that we implemented in routes.js
 app.get('/getlocalcrime', routes.getlocalcrime);
-app.get('/getneighborhooddemographics/:neighborhood', routes.getneighborhooddemographics);
+app.get('/getneighborhooddemographics', routes.getneighborhooddemographics);
 app.get('/gethospitaltype', routes.gethospitaltype);
 app.get('/getlocalhospitals', routes.getlocalhospitals);
 app.get('/getrankhousing', routes.getrankhousing);
