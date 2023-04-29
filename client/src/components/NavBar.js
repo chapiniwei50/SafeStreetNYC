@@ -40,6 +40,7 @@ export default function NavBar() {
           <NavText href='/albums' text='AIRBNB' />
           <NavText href='/songs' text='HOUSINGS' />
           <NavText href='/hospitals' text='HOSPITALS' />
+          <NavText href='/nearby' text='NEARBY HOSPITALS&CRIME' />
         </Toolbar>
       </Container>
     </AppBar>

@@ -24,6 +24,7 @@ export default function SongsPage() {
   const [price, setPrice] = useState(3);
   const [barRadar, setBarRadar] = useState(true);
   const [chartData, setChartData] = useState(true);
+  
  
 const testdata =[];
 

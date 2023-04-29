@@ -18,6 +18,7 @@ const getlocalcrime = async function(req, res) {
   const latitude = req.query.Latitude ?? 0;
   const longitude = req.query.Logitude ?? 0;
   const distance = req.query.Distance ?? 0;
+  
 
   connection.query(`
     WITH crime_range AS (
