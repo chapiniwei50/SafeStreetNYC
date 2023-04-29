@@ -46,62 +46,49 @@ const getlocalcrime = async function(req, res) {
 }
 
 // GET /getneighborhooddemographics
+
+
+
+
+
 const getneighborhooddemographics = async function(req, res) {
   console.log("in get neghborhood dem")
   const neighborhood = req.query.Neighborhood;
   const dataList = [];
   console.log(neighborhood);
-
   connection.query(`
-    WITH airbnb AS (
-      SELECT property_id, longitude, latitude, neighborhood
-      FROM Airbnb
-      WHERE UPPER(neighborhood) like '%${neighborhood}%'
-    ),
-    housing AS (
-        SELECT longitude, latitude, neighborhood
-        FROM Property_Sales
-        WHERE UPPER(Neighborhood) like '%${neighborhood}%' -- upper case
-    ),
-    demographics AS (
-        SELECT (SUM(Count_Male) / SUM(Count_Gender_Total)) as PCT_Male,
-              (SUM(Count_Female) / SUM(Count_Gender_Total)) as PCT_Female,
-              (SUM(Count_Hispanic_Latino) / SUM(Count_Ethnicity_Total)) as PCT_Latino,
-              (SUM(Count_American_Indian) / SUM(Count_Ethnicity_Total)) as PCT_American_Indian,
-              (SUM(Count_Asian) / SUM(Count_Ethnicity_Total)) as PCT_Asian,
-              (SUM(Count_White) / SUM(Count_Ethnicity_Total)) as PCT_White,
-              (SUM(Count_Black) / SUM(Count_Ethnicity_Total)) as PCT_Black,
-              (SUM(Count_Pacific_Islander) / SUM(Count_Ethnicity_Total)) as PCT_Pacific_Islander,
-              (SUM(Count_Other_Ethnicity) / SUM(Count_Ethnicity_Total)) as PCT_Other_Ethnicity,
-              N.neighborhood
-        FROM ZIP_Code_Neighborhood N JOIN Demographics D ON N.ZIP_Code = D.ZIP_Code
-        GROUP BY N.Neighborhood
-        HAVING N.neighborhood like '%${neighborhood}%'
-    )
-    SELECT DISTINCT D.neighborhood as neighborhood, PCT_Male, PCT_Female, PCT_American_Indian, PCT_Asian, PCT_Black, PCT_Latino,
-          PCT_Pacific_Islander, PCT_White, PCT_Other_Ethnicity
-    FROM (demographics D JOIN housing H ON UPPER(D.Neighborhood) LIKE CONCAT('%', UPPER(H.Neighborhood), '%'))
-            JOIN airbnb A ON UPPER(D.Neighborhood) LIKE CONCAT('%', UPPER(A.neighborhood), '%')
+    SELECT (SUM(Count_Male) / SUM(Count_Gender_Total)) as PCT_Male,
+          (SUM(Count_Female) / SUM(Count_Gender_Total)) as PCT_Female,
+          (SUM(Count_Hispanic_Latino) / SUM(Count_Ethnicity_Total)) as PCT_Latino,
+          (SUM(Count_American_Indian) / SUM(Count_Ethnicity_Total)) as PCT_American_Indian,
+          (SUM(Count_Asian) / SUM(Count_Ethnicity_Total)) as PCT_Asian,
+          (SUM(Count_White) / SUM(Count_Ethnicity_Total)) as PCT_White,
+          (SUM(Count_Black) / SUM(Count_Ethnicity_Total)) as PCT_Black,
+          (SUM(Count_Pacific_Islander) / SUM(Count_Ethnicity_Total)) as PCT_Pacific_Islander,
+          (SUM(Count_Other_Ethnicity) / SUM(Count_Ethnicity_Total)) as PCT_Other_Ethnicity,
+          N.neighborhood
+    FROM ZIP_Code_Neighborhood N JOIN Demographics D ON N.ZIP_Code = D.ZIP_Code
+    GROUP BY N.Neighborhood
+    HAVING N.neighborhood like '%${neighborhood}%'
     `, (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
       res.json({});
     } else {
       for(let i = 0; i < data.length; i++) {
-        console.log(data[i])
-        // let obj = {
-        //   neighborhood: data[i].neighborhood,
-        //   PCT_Male: data[i].PCT_Male,
-        //   PCT_Female: data[i].PCT_Female,
-        //   PCT_American_Indian: data[i].PCT_American_Indian,
-        //   PCT_Asian: data[i].PCT_Asian,
-        //   PCT_Black: data[i].PCT_Black,
-        //   PCT_Latino: data[i].PCT_Latino,
-        //   PCT_Pacific_Islander: data[i].PCT_Pacific_Islander,
-        //   PCT_White: data[i].PCT_White,
-        //   PCT_Other_Ethnicity: data[i].PCT_Other_Ethnicity
-        // }
-        // dataList.push(obj);
+        let obj = {
+          neighborhood: data[i].neighborhood,
+          PCT_Male: data[i].PCT_Male,
+          PCT_Female: data[i].PCT_Female,
+          PCT_American_Indian: data[i].PCT_American_Indian,
+          PCT_Asian: data[i].PCT_Asian,
+          PCT_Black: data[i].PCT_Black,
+          PCT_Latino: data[i].PCT_Latino,
+          PCT_Pacific_Islander: data[i].PCT_Pacific_Islander,
+          PCT_White: data[i].PCT_White,
+          PCT_Other_Ethnicity: data[i].PCT_Other_Ethnicity
+        }
+        dataList.push(obj);
       }
       res.json(dataList);
     }

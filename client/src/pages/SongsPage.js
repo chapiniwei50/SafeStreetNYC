@@ -1,13 +1,14 @@
 import { useEffect, useState, React } from 'react';
 import { Button, Checkbox, Container, FormControlLabel, Grid, Link, Slider, TextField } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
+import { Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,PieChart, Pie, Cell, Legend } from 'recharts';
 // import SongCard from '../components/SongCard';
 // import { formatDuration } from '../helpers/formatter';
 
 const config = require('../config.json');
 
 
-
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF', '#FFC107', '#36C9A7', '#E74C3C', '#3498DB'];
 
 
 
@@ -21,8 +22,10 @@ export default function SongsPage() {
   const [healthcare, setHealthcare] = useState(3);
   const [safety, setSafety] = useState(3);
   const [price, setPrice] = useState(3);
-
-
+  const [barRadar, setBarRadar] = useState(true);
+  const [chartData, setChartData] = useState(true);
+ 
+const testdata =[];
 
 
   function Map(props) {
@@ -113,6 +116,47 @@ export default function SongsPage() {
       .then(demographics => {
         console.log(demographics);
         console.log("effect here")
+       
+        const chartD = [];
+       
+          let obj = {
+            name: 'American Indian',
+            value: demographics[0].PCT_American_Indian
+          }
+          chartD.push(obj);
+          obj ={
+            name: 'Asian',
+            value: demographics[0].PCT_Asian
+          }
+          obj ={
+            name: 'Black',
+            value: demographics[0].PCT_Black
+          }
+          chartD.push(obj);
+          obj ={
+            name: 'Latino',
+            value: demographics[0].PCT_Latino
+          }
+          chartD.push(obj);
+          obj ={
+            name: 'Other Ethnicity',
+            value: demographics[0].PCT_Other_Ethnicity
+          }
+          chartD.push(obj);
+          obj ={
+            name: 'White',
+            value: demographics[0].PCT_White
+          }
+          chartD.push(obj);
+          obj ={
+            name: 'Pacific Islander',
+            value: demographics[0].PCT_Pacific_Islander
+          }
+          chartD.push(obj);
+          console.log(chartD);
+        
+        setChartData(chartD);
+  
         
       });
   }
@@ -141,10 +185,29 @@ export default function SongsPage() {
     { id: 'Caruch Houses Family Health Center', Name: 'hey', Location: 'yay', Phone: 'f' },
   ]
 
+  const handleGraphChange = () => {
+    setBarRadar(!barRadar);
+  };
 
 
   
   const apikey = 'AIzaSyBiQxXOFhKyV-xlXCyFoBAIgshY5UhM7i8';
+
+
+ 
+
+  const RADIAN = Math.PI / 180;
+const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
+  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+  return (
+    <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+      {`${(percent * 100).toFixed(0)}%`}
+    </text>
+  );
+};
 
   // This component makes uses of the Grid component from MUI (https://mui.com/material-ui/react-grid/).
   // The Grid component is super simple way to create a page layout. Simply make a <Grid container> tag
@@ -210,9 +273,40 @@ export default function SongsPage() {
       <Button onClick={() => search() } style={{ left: '50%', transform: 'translateX(-50%)' }}>
         Search
       </Button>
+     
+     
       
-      <div><h1>My Map</h1><Map apikey ={apikey}/></div>
+      {/* <div><h1>My Map</h1><Map apikey ={apikey}/></div> */}
 
+      <div style={{ margin: 20 }}>
+          { // This ternary statement returns a BarChart if barRadar is true, and a RadarChart otherwise
+            barRadar
+              ? (
+                <ResponsiveContainer height={250}>
+               <PieChart width={400} height={400}>
+          
+          <Pie dataKey="value" data={chartData} cx="50%" cy="50%"innerRadius={40} outerRadius={80} fill="#82ca9d" />
+          <Tooltip />
+        </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <ResponsiveContainer height={250}>
+                  {/* TODO (TASK 21): display the same data as the bar chart using a radar chart */}
+                  {/* Hint: refer to documentation at https://recharts.org/en-US/api/RadarChart */}
+                  {/* Hint: note you can omit the <Legend /> element and only need one Radar element, as compared to the sample in the docs */}
+                  <PieChart width={400} height={400}>
+          
+          <Pie dataKey="value" data={chartData} cx="50%" cy="50%" innerRadius={40} outerRadius={80} fill="#82ca9d" />
+          <Tooltip />
+        </PieChart>
+                </ResponsiveContainer>
+              )
+          }
+        </div>
+
+      <div>
+        
+    </div>
 
       <h2>Results</h2>
       {/* Notice how similar the DataGrid component is to our LazyTable! What are the differences? */}
