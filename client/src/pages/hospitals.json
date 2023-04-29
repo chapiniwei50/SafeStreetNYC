@@ -1,0 +1,470 @@
+[
+ {
+   "Borough": "Manhattan",
+   "Facility Name": "La Clinica Del Barrio",
+   "Latitude": null,
+   "Longitude": null
+ },
+ {
+   "Borough": "Queens",
+   "Facility Name": "Elmhurst Hospital Center",
+   "Latitude": null,
+   "Longitude": null
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "Ida G. Israel Community Health Center",
+   "Latitude": 40.578468,
+   "Longitude": -73.989614
+ },
+ {
+   "Borough": "Queens",
+   "Facility Name": "South Queens Community Health Center",
+   "Latitude": 40.688615,
+   "Longitude": -73.785593
+ },
+ {
+   "Borough": "Bronx",
+   "Facility Name": "Melrose Houses Child Health Clinic",
+   "Latitude": null,
+   "Longitude": null
+ },
+ {
+   "Borough": "Bronx",
+   "Facility Name": "Daniel Webster Houses Child Health Clinic",
+   "Latitude": null,
+   "Longitude": null
+ },
+ {
+   "Borough": "Bronx",
+   "Facility Name": "Segundo Ruiz Belvis Diagnostic & Treatment Center",
+   "Latitude": null,
+   "Longitude": null
+ },
+ {
+   "Borough": "Queens",
+   "Facility Name": "Parsons Communicare Clinic",
+   "Latitude": 40.703826,
+   "Longitude": -73.800483
+ },
+ {
+   "Borough": "Queens",
+   "Facility Name": "Queens Hospital Center",
+   "Latitude": 40.71725,
+   "Longitude": -73.803433
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "Cumberland Diagnostic & Treatment Center",
+   "Latitude": null,
+   "Longitude": null
+ },
+ {
+   "Borough": "Queens",
+   "Facility Name": "Junction Boulevard Child Health Clinic",
+   "Latitude": 40.754179,
+   "Longitude": -73.872231
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "Woodhull Medical and Mental Health Center",
+   "Latitude": 40.700528,
+   "Longitude": -73.941604
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "Eleanor Roosevelt Houses Child Health Clinic",
+   "Latitude": 40.694049,
+   "Longitude": -73.934552
+ },
+ {
+   "Borough": "Bronx",
+   "Facility Name": "Jacobi Medical Center",
+   "Latitude": 40.857427,
+   "Longitude": -73.847079
+ },
+ {
+   "Borough": "Manhattan",
+   "Facility Name": "Metropolitan Hospital Center",
+   "Latitude": 40.784557,
+   "Longitude": -73.94378
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "Bushwick Communicare",
+   "Latitude": 40.694674,
+   "Longitude": -73.919153
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "Lafayette Houses Child Health Clinic",
+   "Latitude": 40.690361,
+   "Longitude": -73.960108
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "East New York Diagnostic & Treatment Center",
+   "Latitude": 40.671977,
+   "Longitude": -73.895248
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "Williamsburg Child Health Clinic",
+   "Latitude": 40.712046,
+   "Longitude": -73.943989
+ },
+ {
+   "Borough": "Bronx",
+   "Facility Name": "North Central Bronx Hospital",
+   "Latitude": 40.880462,
+   "Longitude": -73.88164
+ },
+ {
+   "Borough": "Manhattan",
+   "Facility Name": "Harlem Hospital Center",
+   "Latitude": 40.814358,
+   "Longitude": -73.940659
+ },
+ {
+   "Borough": "Manhattan",
+   "Facility Name": "Sydenham Health Center",
+   "Latitude": null,
+   "Longitude": null
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "Dr. Susan Smith McKinney Nursing and Rehabilitation Center",
+   "Latitude": 40.659968,
+   "Longitude": -73.939733
+ },
+ {
+   "Borough": "Bronx",
+   "Facility Name": "Lincoln  Medical &  Mental Health Center",
+   "Latitude": null,
+   "Longitude": null
+ },
+ {
+   "Borough": "Queens",
+   "Facility Name": "Corona Child Health Clinic",
+   "Latitude": 40.744001,
+   "Longitude": -73.858404
+ },
+ {
+   "Borough": "Staten Island",
+   "Facility Name": "Sea View Hospital Rehabilitation Center & Home",
+   "Latitude": 40.593798,
+   "Longitude": -74.135437
+ },
+ {
+   "Borough": "Queens",
+   "Facility Name": "Springfield Gardens Medical Center",
+   "Latitude": 40.678997,
+   "Longitude": -73.754077
+ },
+ {
+   "Borough": "Bronx",
+   "Facility Name": "Segundo Ruiz Belvis Diagnostic & Treatment Center",
+   "Latitude": null,
+   "Longitude": null
+ },
+ {
+   "Borough": "Bronx",
+   "Facility Name": "Morrisania Diagnostic & Treatment Center",
+   "Latitude": 40.835957,
+   "Longitude": -73.919986
+ },
+ {
+   "Borough": "Manhattan",
+   "Facility Name": "Renaissance Health Care Network Diagnostic & Treatment Center",
+   "Latitude": null,
+   "Longitude": null
+ },
+ {
+   "Borough": "Manhattan",
+   "Facility Name": "Washington Heights Child Health Care Center",
+   "Latitude": null,
+   "Longitude": null
+ },
+ {
+   "Borough": "Bronx",
+   "Facility Name": "Jacobi Medical Center",
+   "Latitude": 40.857427,
+   "Longitude": -73.847079
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "Cumberland Diagnostic & Treatment Center",
+   "Latitude": null,
+   "Longitude": null
+ },
+ {
+   "Borough": "Manhattan",
+   "Facility Name": "Renaissance Health Care Network Diagnostic & Treatment Center",
+   "Latitude": null,
+   "Longitude": null
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "Kings County Hospital Center",
+   "Latitude": 40.655762,
+   "Longitude": -73.94458
+ },
+ {
+   "Borough": "Manhattan",
+   "Facility Name": "Coler-Goldwater Specialty Hospital and Nursing Facility/Coler Campus",
+   "Latitude": 40.7698,
+   "Longitude": -73.941218
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "Kings County Hospital Center",
+   "Latitude": 40.655762,
+   "Longitude": -73.94458
+ },
+ {
+   "Borough": "Manhattan",
+   "Facility Name": "Bellevue Hospital Center",
+   "Latitude": 40.739173,
+   "Longitude": -73.976862
+ },
+ {
+   "Borough": "Manhattan",
+   "Facility Name": "Roberto Clemente Health Center",
+   "Latitude": null,
+   "Longitude": null
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "Jonathan Williams Houses Child Health Clinic",
+   "Latitude": 40.715381,
+   "Longitude": -73.956135
+ },
+ {
+   "Borough": "Manhattan",
+   "Facility Name": "Grant Houses Clinic",
+   "Latitude": 40.814794,
+   "Longitude": -73.958928
+ },
+ {
+   "Borough": "Manhattan",
+   "Facility Name": "Dyckman Clinica De Las Americas",
+   "Latitude": 40.86164,
+   "Longitude": -73.92459
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "East New York Diagnostic & Treatment Center",
+   "Latitude": 40.671977,
+   "Longitude": -73.895248
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "Brownsville Child Health Clinic",
+   "Latitude": 40.664827,
+   "Longitude": -73.911415
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "Coney Island Hospital",
+   "Latitude": 40.586552,
+   "Longitude": -73.966168
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "Williamsburg Health Center",
+   "Latitude": 40.712046,
+   "Longitude": -73.943989
+ },
+ {
+   "Borough": "Staten Island",
+   "Facility Name": "Stapleton Child Health Clinic",
+   "Latitude": 40.626584,
+   "Longitude": -74.076758
+ },
+ {
+   "Borough": "Queens",
+   "Facility Name": "Elmhurst Hospital Center",
+   "Latitude": null,
+   "Longitude": null
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "Homecrest Child Health Clinic",
+   "Latitude": null,
+   "Longitude": null
+ },
+ {
+   "Borough": "Staten Island",
+   "Facility Name": "Mariner's Harbor Houses Child Health Clinic",
+   "Latitude": 40.626017,
+   "Longitude": -74.156541
+ },
+ {
+   "Borough": "Manhattan",
+   "Facility Name": "Judson Health Center",
+   "Latitude": 40.721721,
+   "Longitude": -73.995732
+ },
+ {
+   "Borough": "Manhattan",
+   "Facility Name": "Metropolitan Hospital Center",
+   "Latitude": 40.784557,
+   "Longitude": -73.94378
+ },
+ {
+   "Borough": "Bronx",
+   "Facility Name": "Gunhill Health Center",
+   "Latitude": 40.874636,
+   "Longitude": -73.85784
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "Greenpoint Community Health Center",
+   "Latitude": 40.729708,
+   "Longitude": -73.954055
+ },
+ {
+   "Borough": "Queens",
+   "Facility Name": "Queens Hospital Center",
+   "Latitude": 40.717209,
+   "Longitude": -73.803419
+ },
+ {
+   "Borough": "Manhattan",
+   "Facility Name": "Gouverneur Healthcare Services",
+   "Latitude": 40.712784,
+   "Longitude": -73.988417
+ },
+ {
+   "Borough": "Manhattan",
+   "Facility Name": "Gouverneur Diagnostic & Treatment Center",
+   "Latitude": 40.712784,
+   "Longitude": -73.988417
+ },
+ {
+   "Borough": "Manhattan",
+   "Facility Name": "Gouverneur Healthcare Services",
+   "Latitude": 40.712784,
+   "Longitude": -73.988417
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "Fort Greene Child Health Clinic",
+   "Latitude": 40.691986,
+   "Longitude": -73.982496
+ },
+ {
+   "Borough": "Manhattan",
+   "Facility Name": "Coler-Goldwater Specialty Hospital and Nursing Facility/Goldwater Campus",
+   "Latitude": 40.756368,
+   "Longitude": -73.956054
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "Sutter Avenue Child Health Clinic",
+   "Latitude": 40.671892,
+   "Longitude": -73.878197
+ },
+ {
+   "Borough": "Manhattan",
+   "Facility Name": "Drew Hamilton Houses Health Center",
+   "Latitude": 40.821706,
+   "Longitude": -73.94273
+ },
+ {
+   "Borough": "Queens",
+   "Facility Name": "Woodside Houses Child Health Clinic",
+   "Latitude": 40.753164,
+   "Longitude": -73.910752
+ },
+ {
+   "Borough": "Bronx",
+   "Facility Name": "Lincoln Medical and Mental Health Center",
+   "Latitude": null,
+   "Longitude": null
+ },
+ {
+   "Borough": "Manhattan",
+   "Facility Name": "Harlem Hospital Center",
+   "Latitude": 40.814358,
+   "Longitude": -73.940659
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "Coney Island Hospital",
+   "Latitude": 40.586552,
+   "Longitude": -73.966168
+ },
+ {
+   "Borough": "Bronx",
+   "Facility Name": "Health Center at Tremont",
+   "Latitude": 40.844083,
+   "Longitude": -73.894482
+ },
+ {
+   "Borough": "Bronx",
+   "Facility Name": "North Central Bronx Hospital",
+   "Latitude": 40.880462,
+   "Longitude": -73.88164
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "Crown Heights Child Health Clinic",
+   "Latitude": 40.67353,
+   "Longitude": -73.935845
+ },
+ {
+   "Borough": "Manhattan",
+   "Facility Name": "Baruch Houses Family Health Center",
+   "Latitude": 40.716079,
+   "Longitude": -73.980373
+ },
+ {
+   "Borough": "Manhattan",
+   "Facility Name": "Manhattanville/St. Nicholas Houses Child Health Care Center",
+   "Latitude": null,
+   "Longitude": null
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "Sumner Avenue Houses Child Health Clinic",
+   "Latitude": 40.697945,
+   "Longitude": -73.941018
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "Woodhull Medical and Mental Health Center",
+   "Latitude": 40.700528,
+   "Longitude": -73.941604
+ },
+ {
+   "Borough": "Brooklyn",
+   "Facility Name": "Bushwick Community Health Center",
+   "Latitude": 40.684318,
+   "Longitude": -73.909056
+ },
+ {
+   "Borough": "Manhattan",
+   "Facility Name": "Bellevue Hospital Center",
+   "Latitude": 40.739173,
+   "Longitude": -73.976862
+ },
+ {
+   "Borough": "Queens",
+   "Facility Name": "Ridgewood Communicare Clinic",
+   "Latitude": 40.702972,
+   "Longitude": -73.905489
+ },
+ {
+   "Borough": "Manhattan",
+   "Facility Name": "Smith Communicare Health Center",
+   "Latitude": 40.712019,
+   "Longitude": -73.997309
+ },
+ {
+   "Borough": "Bronx",
+   "Facility Name": "Morrisania Diagnostic & Treatment Center",
+   "Latitude": 40.835957,
+   "Longitude": -73.919986
+ }
+]

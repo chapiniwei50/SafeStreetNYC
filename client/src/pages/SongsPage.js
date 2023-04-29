@@ -1,4 +1,4 @@
-import { useEffect, useState, React } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Checkbox, Container, FormControlLabel, Grid, Link, Slider, TextField } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 // import SongCard from '../components/SongCard';
@@ -26,32 +26,40 @@ export default function SongsPage() {
 
 
   function Map(props) {
-    useEffect(() => {
-      // Load the Google Maps API script
-      const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyBiQxXOFhKyV-xlXCyFoBAIgshY5UhM7i8&callback=initMap`;
-      script.async = true;
-      document.body.appendChild(script);
+    const mapRef = React.useRef(null);
   
-      // Initialize the map
-      window.initMap = () => {
-        // Create a new map object
-        const map = new window.google.maps.Map(document.getElementById("map"), {
-          center: { lat: 40.7128, lng: -74.0060 },
-          zoom: 12,
-        });
-  
-        // Add a marker to the map
-        // const marker = new window.google.maps.Marker({
-        //   position: { lat: -34.397, lng: 150.644 },
-        //   map: map,
-        //   title: "Sydney",
-        // });
-      };
-    }, [props.apiKey]);
-  
-    return <div id="map" style={{ height: "400px" }}></div>;
+    React.useEffect(() => {
+      // Ensure the script isn't loaded multiple times
+      if (!window.googleMapsScriptLoaded) {
+        loadGoogleMapsApi();
+      } else {
+        window.initMap();
+      }
+    
+      window.initMap = initMap;
+    
+      function loadGoogleMapsApi() {
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${props.apikey}&callback=initMap`;
+        script.async = true;
+        script.defer = true;
+        document.body.appendChild(script);
+        window.googleMapsScriptLoaded = true;
+      }
+    
+      function initMap() {
+        if (window.google && mapRef.current) {
+          new window.google.maps.Map(mapRef.current, {
+            center: { lat: 40.7128, lng: -74.0060 },
+            zoom: 12,
+          });
+        }
+      }
+    }, [props.apikey]);
+    
+    return <div ref={mapRef} style={{ height: "400px", width: "100%" }} />;
   }
+  
 
   // function Map(props) {
  
