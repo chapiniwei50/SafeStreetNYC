@@ -1,68 +1,133 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, React } from 'react';
 import { Button, Checkbox, Container, FormControlLabel, Grid, Link, Slider, TextField } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-
 import SongCard from '../components/SongCard';
 import { formatDuration } from '../helpers/formatter';
+
 const config = require('../config.json');
+
+
+
+
+
+
 
 export default function SongsPage() {
   const [pageSize, setPageSize] = useState(10);
   const [data, setData] = useState([]);
-  const [selectedSongId, setSelectedSongId] = useState(null);
+  const [selectedNeighborhood, setSelectedNeighborhood] = useState(null);
 
-  const [title, setTitle] = useState('');
-  const [duration, setDuration] = useState([60, 660]);
-  const [plays, setPlays] = useState([0, 1100000000]);
-  const [danceability, setDanceability] = useState([0, 1]);
-  const [energy, setEnergy] = useState([0, 1]);
-  const [valence, setValence] = useState([0, 1]);
-  const [explicit, setExplicit] = useState(false);
+  const [neighborhood, setNeighborhood] = useState('');
+  const [healthcare, setHealthcare] = useState(33);
+  const [safety, setSafety] = useState(33);
+  const [price, setPrice] = useState(33);
+ 
+
+
+
+  function Map(props) {
+    useEffect(() => {
+      // Load the Google Maps API script
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyBiQxXOFhKyV-xlXCyFoBAIgshY5UhM7i8&callback=initMap`;
+      script.async = true;
+      document.body.appendChild(script);
+  
+      // Initialize the map
+      window.initMap = () => {
+        // Create a new map object
+        const map = new window.google.maps.Map(document.getElementById("map"), {
+          center: { lat: 40.7128, lng: -74.0060 },
+          zoom: 12,
+        });
+  
+        // Add a marker to the map
+        // const marker = new window.google.maps.Marker({
+        //   position: { lat: -34.397, lng: 150.644 },
+        //   map: map,
+        //   title: "Sydney",
+        // });
+      };
+    }, [props.apiKey]);
+  
+    return <div id="map" style={{ height: "400px" }}></div>;
+  }
+
+  // function Map(props) {
+ 
+  //   const { center, zoom } = props;
+  
+  //   return (
+  //     <div style={{ height: '100vh', width: '100%' }}>
+  //       <GoogleMapReact
+  //         bootstrapURLKeys={{ key: "AIzaSyBiQxXOFhKyV-xlXCyFoBAIgshY5UhM7i8" }}
+  //         defaultCenter={center}
+  //         defaultZoom={zoom}
+  //       >
+  //         {/* Add markers, polygons, or other map components here */}
+  //       </GoogleMapReact>
+  //     </div>
+  //   );
+  // }
+
+
+ 
 
   useEffect(() => {
-    fetch(`http://${config.server_host}:${config.server_port}/search_songs`)
+    console.log("use effect")
+    fetch(`http://${config.server_host}:${config.server_port}/getrankhousing`)
       .then(res => res.json())
       .then(resJson => {
-        const songsWithId = resJson.map((song) => ({ id: song.song_id, ...song }));
-        setData(songsWithId);
+        // const housings = resJson.map((song) => ({ id: song.song_id, ...song }));
+        console.log("here")
+        // setData(housings);
       });
   }, []);
 
+
+  // const healthcare_weight = req.query.Healthcare_Weight ?? 0;
+  // const safety_weight = req.query.Safety_Weight ?? 0;
+  // const price_weight = req.query.Price_Weight ?? 0;
+  // const neighborhood = req.query.Neighborhood;
+
+
   const search = () => {
-    fetch(`http://${config.server_host}:${config.server_port}/search_songs?title=${title}` +
-      `&duration_low=${duration[0]}&duration_high=${duration[1]}` +
-      `&plays_low=${plays[0]}&plays_high=${plays[1]}` +
-      `&danceability_low=${danceability[0]}&danceability_high=${danceability[1]}` +
-      `&energy_low=${energy[0]}&energy_high=${energy[1]}` +
-      `&valence_low=${valence[0]}&valence_high=${valence[1]}` +
-      `&explicit=${explicit}`
+    console.log("search")
+    fetch(`http://${config.server_host}:${config.server_port}/getrankhousing?Neighborhood=${neighborhood}` +
+      `&healthcare=${healthcare}` +
+       `&safety=${safety}` +
+       `&price=${price}` 
     )
+
+  
       .then(res => res.json())
       .then(resJson => {
         // DataGrid expects an array of objects with a unique id.
         // To accomplish this, we use a map with spread syntax (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax)
-        const songsWithId = resJson.map((song) => ({ id: song.song_id, ...song }));
-        setData(songsWithId);
+        // const songsWithId = resJson.map((song) => ({ id: song.song_id, ...song }));
+        // setData(songsWithId);
+         console.log("here")
       });
   }
+
 
   // This defines the columns of the table of songs used by the DataGrid component.
   // The format of the columns array and the DataGrid component itself is very similar to our
   // LazyTable component. The big difference is we provide all data to the DataGrid component
   // instead of loading only the data we need (which is necessary in order to be able to sort by column)
   const columns = [
-    { field: 'title', headerName: 'Title', width: 300, renderCell: (params) => (
-        <Link onClick={() => setSelectedSongId(params.row.song_id)}>{params.value}</Link>
+    { field: 'neighborhood', headerName: 'Neighborhood', width: 300, renderCell: (params) => (
+        <Link onClick={() => setSelectedNeighborhood(params.row.song_id)}>{params.value}</Link>
     ) },
-    { field: 'duration', headerName: 'Duration' },
-    { field: 'plays', headerName: 'Plays' },
-    { field: 'danceability', headerName: 'Danceability' },
-    { field: 'energy', headerName: 'Energy' },
-    { field: 'valence', headerName: 'Valence' },
-    { field: 'tempo', headerName: 'Tempo' },
-    { field: 'key_mode', headerName: 'Key' },
-    { field: 'explicit', headerName: 'Explicit' },
+    { field: 'healthcare', headerName: 'Healthcare', width: 200 },
+    { field: 'safety', headerName: 'Safety', width: 200 },
+    { field: 'price', headerName: 'Price', width: 200 },
+    
   ]
+
+
+  
+  const apikey = 'AIzaSyBiQxXOFhKyV-xlXCyFoBAIgshY5UhM7i8';
 
   // This component makes uses of the Grid component from MUI (https://mui.com/material-ui/react-grid/).
   // The Grid component is super simple way to create a page layout. Simply make a <Grid container> tag
@@ -73,84 +138,66 @@ export default function SongsPage() {
   // will automatically lay out all the grid items into rows based on their xs values.
   return (
     <Container>
-      {selectedSongId && <SongCard songId={selectedSongId} handleClose={() => setSelectedSongId(null)} />}
-      <h2>Search Songs</h2>
+      {selectedNeighborhood && <SongCard neighborhood={selectedNeighborhood} handleClose={() => setSelectedNeighborhood(null)} />}
+      <h2>Search Neighborhood</h2>
       <Grid container spacing={6}>
-        <Grid item xs={8}>
-          <TextField label='Title' value={title} onChange={(e) => setTitle(e.target.value)} style={{ width: "100%" }}/>
+        <Grid item xs={12}>
+          <TextField label='Neighborhood' value={neighborhood} onChange={(e) => setNeighborhood(e.target.value)} style={{ width: "100%" }}/>
+        </Grid>
+        
+        <Grid item xs={4}>
+          <p>Healthcare</p>
+          <Slider
+            value={healthcare}
+            min={0}
+            max={100}
+            step={10}
+            onChange={(e, newValue) => setHealthcare(newValue)}
+            valueLabelDisplay='auto'
+            valueLabelFormat={value => <div>{value}</div>}
+          />
         </Grid>
         <Grid item xs={4}>
-          <FormControlLabel
-            label='Explicit'
-            control={<Checkbox checked={explicit} onChange={(e) => setExplicit(e.target.checked)} />}
-          />
-        </Grid>
-        <Grid item xs={2.4}>
-          <p>Duration</p>
+          <p>Safety</p>
           <Slider
-            value={duration}
-            min={60}
-            max={660}
-            step={10}
-            onChange={(e, newValue) => setDuration(newValue)}
-            valueLabelDisplay='auto'
-            valueLabelFormat={value => <div>{formatDuration(value)}</div>}
-          />
-        </Grid>
-        <Grid item xs={2.4}>
-          <p>Plays (millions)</p>
-          <Slider
-            value={plays}
+            value={safety}
             min={0}
-            max={1100000000}
-            step={10000000}
-            onChange={(e, newValue) => setPlays(newValue)}
+            max={100}
+            step={10}
+            onChange={(e, newValue) => setSafety(newValue)}
             valueLabelDisplay='auto'
-            valueLabelFormat={value => <div>{value / 1000000}</div>}
+            valueLabelFormat={value => <div>{value}</div>}
+          />
+        </Grid>
+
+        <Grid item xs={4}>
+          <p>Price</p>
+          <Slider
+            value={price}
+            min={0}
+            max={100}
+            step={10}
+            onChange={(e, newValue) => setPrice(newValue)}
+            valueLabelDisplay='auto'
+            valueLabelFormat={value => <div>{value}</div>}
           />
         </Grid>
         {/* TODO (TASK 24): add sliders for danceability, energy, and valence (they should be all in the same row of the Grid) */}
         {/* Hint: consider what value xs should be to make them fit on the same row. Set max, min, and a reasonable step. Is valueLabelFormat is necessary? */}
-        <Grid item xs={2.4}>
-          <p>Danceability</p>
-          <Slider
-            value={danceability}
-            min={0}
-            max={1}
-            step={0.1}
-            onChange={(e, newValue) => setDanceability(newValue)}
-            valueLabelDisplay='auto'
-            valueLabelFormat={value => <div>{value}</div>}
-          />
-        </Grid>
-        <Grid item xs={2.4}>
-          <p>Energy</p>
-          <Slider
-            value={energy}
-            min={0}
-            max={1}
-            step={0.1}
-            onChange={(e, newValue) => setEnergy(newValue)}
-            valueLabelDisplay='auto'
-            valueLabelFormat={value => <div>{value}</div>}
-          />
-        </Grid>
-        <Grid item xs={2.4}>
-          <p>Valence</p>
-          <Slider
-            value={valence}
-            min={0}
-            max={1}
-            step={0.1}
-            onChange={(e, newValue) => setValence(newValue)}
-            valueLabelDisplay='auto'
-            valueLabelFormat={value => <div>{value}</div>}
-          />
-        </Grid>
+       
+    
       </Grid>
+
       <Button onClick={() => search() } style={{ left: '50%', transform: 'translateX(-50%)' }}>
         Search
       </Button>
+
+      <div>
+      <h1>My Map</h1>
+      <Map apikey ={apikey}/>
+    </div>
+
+
       <h2>Results</h2>
       {/* Notice how similar the DataGrid component is to our LazyTable! What are the differences? */}
       <DataGrid

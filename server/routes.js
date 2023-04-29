@@ -173,7 +173,7 @@ const getrankhousing = async function(req, res) {
   const healthcare_weight = req.query.Healthcare_Weight ?? 0;
   const safety_weight = req.query.Safety_Weight ?? 0;
   const price_weight = req.query.Price_Weight ?? 0;
-  const neighborhood = req.query.Neighborhood;
+  const neighborhood = req.query.Neighborhood ?? '';
 
   connection.query(`
   WITH neighborhood_housing AS (
