@@ -3,6 +3,7 @@ const cors = require('cors');
 const config = require('./config');
 const routes = require('./routes');
 const routesDDB = require('./routesDDB');
+const bodyParser = require('body-parser')
 
 const app = express();
 app.use(cors({
@@ -25,9 +26,16 @@ app.get('/gethospitaltype', routes.gethospitaltype);
 app.get('/getlocalhospitals', routes.getlocalhospitals);
 app.get('/getrankhousing', routes.getrankhousing);
 app.get('/getrankairbnb', routes.getrankairbnb);
+app.get('/getavailablerooms', routes.getavailablerooms);
+app.get('/findSimilarity', routes.findsimilarbypricecrimeborough);
 
-app.get('/authenticator', routesDDB.verifyUser);
-
+app.use(bodyParser.json());
+app.post('/authenticator', routesDDB.verifyUser);
+app.post('/addUser', routesDDB.addUser);
+app.get('/externalAuthenticator', routesDDB.verifyExternalUser);
+app.get('/isVerified', routesDDB.isVerified);
+app.get('/loggingOut', routesDDB.loggingOut);
+app.get('/getAvgPercentagePrice', routes.getAvgPercentagePrice);
 // app.get('/author/:type', routes.author);
 // app.get('/random', routes.random);
 // app.get('/song/:song_id', routes.song);

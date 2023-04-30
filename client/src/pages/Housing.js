@@ -2,6 +2,7 @@ import { useEffect, useState, React } from 'react';
 import { Button, Checkbox, Container, FormControlLabel, Grid, Link, Slider, TextField } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,PieChart, Pie, Cell, Legend } from 'recharts';
+import {useNavigate} from "react-router-dom";
 // import SongCard from '../components/SongCard';
 // import { formatDuration } from '../helpers/formatter';
 
@@ -24,9 +25,27 @@ export default function SongsPage() {
   const [price, setPrice] = useState(3);
   const [barRadar, setBarRadar] = useState(true);
   const [chartData, setChartData] = useState(true);
+  const [chartDataG, setChartDataG] = useState(true);
   
  
 const testdata =[];
+const navigation = useNavigate();
+
+function myFunction() {
+  console.log("HIIII");
+    fetch(`http://${config.server_host}:${config.server_port}/isVerified`)
+    .then(response => response.json())
+    .then(data =>{
+      if(!data.check) {
+        navigation('/')
+      }
+      console.log(data)
+    })
+  }
+
+  useEffect(() => {
+    myFunction();
+  });
 
 
   function Map(props) {
@@ -98,18 +117,18 @@ const testdata =[];
   const search = () => {
     console.log("search")
     
-    // fetch(`http://${config.server_host}:${config.server_port}/getrankhousing?Neighborhood=${neighborhood}` +
-    //   `&Healthcare_Weight=${healthcare}` +
-    //    `&Safety_Weight=${safety}` +
-    //    `&Price_Weight=${price}` 
-    // )
-    //   .then(res => res.json())
-    //   .then(housings => {
-    //     console.log(housings);
-    //     console.log("effect here")
-    //     setData(housings);
-    //     console.log(data);
-    //   });
+    fetch(`http://${config.server_host}:${config.server_port}/getrankhousing?Neighborhood=${neighborhood}` +
+      `&Healthcare_Weight=${healthcare}` +
+       `&Safety_Weight=${safety}` +
+       `&Price_Weight=${price}` 
+    )
+      .then(res => res.json())
+      .then(housings => {
+        console.log(housings);
+        console.log("effect here")
+        setData(housings);
+        console.log(data);
+      });
 
     fetch(`http://${config.server_host}:${config.server_port}/getneighborhooddemographics?Neighborhood=${neighborhood}` 
     )
@@ -117,7 +136,7 @@ const testdata =[];
       .then(demographics => {
         console.log(demographics);
         console.log("effect here")
-       
+        const chartG =[];
         const chartD = [];
        
           let obj = {
@@ -154,9 +173,21 @@ const testdata =[];
             value: demographics[0].PCT_Pacific_Islander
           }
           chartD.push(obj);
+          obj ={
+            name: 'Female',
+            value: demographics[0].PCT_Female
+          }
+          chartG.push(obj);
+          obj ={
+            name: 'Male',
+            value: demographics[0].PCT_Male
+          }
+          chartG.push(obj);
           console.log(chartD);
+          console.log(chartG);
         
         setChartData(chartD);
+        setChartDataG(chartG);
   
         
       });
@@ -171,10 +202,11 @@ const testdata =[];
     // { field: 'neighborhood', headerName: 'Neighborhood', width: 300, renderCell: (params) => (
     //     <Link onClick={() => setSelectedNeighborhood(params.row.song_id)}>{params.value}</Link>
     // ) },
-    { field: 'neighborhood', headerName: 'Address', width: 300 },
-    { field: 'healthcare', headerName: 'Healthcare Rank', width: 200 },
-    { field: 'safety', headerName: 'Safety Rank', width: 200 },
-    { field: 'price', headerName: 'Price Rank', width: 200 },
+    { field: 'Address', headerName: 'Address', width: 300 },
+    { field: 'Rank_Address', headerName: 'Total Rank', width: 200 },
+    { field: 'Rank_Healthcare', headerName: 'Healthcare Rank', width: 200 },
+    { field: 'Rank_Crime', headerName: 'Safety Rank', width: 200 },
+    { field: 'Rank_Price', headerName: 'Price Rank', width: 200 },
     
   ];
   const rows = [
@@ -219,9 +251,9 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
   // will automatically lay out all the grid items into rows based on their xs values.
   return (
     <Container>
-      
+
       {/* {selectedNeighborhood && <SongCard neighborhood={selectedNeighborhood} handleClose={() => setSelectedNeighborhood(null)} />} */}
-      <h2>Search Neighborhood</h2>
+      <h2>Search Housing Neighborhood</h2>
       <Grid container spacing={6}>
         <Grid item xs={12}>
           <TextField label='Neighborhood' value={neighborhood} onChange={(e) => setNeighborhood(e.target.value)} style={{ width: "100%" }}/>
@@ -277,16 +309,19 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
      
      
       
+      <Grid container spacing={6}>
       {/* <div><h1>My Map</h1><Map apikey ={apikey}/></div> */}
-
-      <div style={{ margin: 20 }}>
+      <Grid item xs={6}>
+      <div >
+        
+      <h2>Race Distribution</h2>
           { // This ternary statement returns a BarChart if barRadar is true, and a RadarChart otherwise
             barRadar
               ? (
                 <ResponsiveContainer height={250}>
                <PieChart width={400} height={400}>
           
-          <Pie dataKey="value" data={chartData} cx="50%" cy="50%"innerRadius={40} outerRadius={80} fill="#82ca9d" />
+          <Pie dataKey="value" data={chartData} cx="20%" cy="50%"innerRadius={40} outerRadius={80} fill="#82ca9d" />
           <Tooltip />
         </PieChart>
                 </ResponsiveContainer>
@@ -297,19 +332,49 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
                   {/* Hint: note you can omit the <Legend /> element and only need one Radar element, as compared to the sample in the docs */}
                   <PieChart width={400} height={400}>
           
-          <Pie dataKey="value" data={chartData} cx="50%" cy="50%" innerRadius={40} outerRadius={80} fill="#82ca9d" />
+          <Pie dataKey="value" data={chartData} cx="20%" cy="50%" innerRadius={40} outerRadius={80} fill="#82ca9d" />
           <Tooltip />
         </PieChart>
                 </ResponsiveContainer>
               )
           }
         </div>
-
+        </Grid>
+       
+        <Grid item xs={6}>
+        <div >
+        <h2>Gender Distribution</h2>
+          { // This ternary statement returns a BarChart if barRadar is true, and a RadarChart otherwise
+            barRadar
+              ? (
+                <ResponsiveContainer height={250}>
+               <PieChart width={400} height={400}>
+          
+          <Pie dataKey="value" data={chartDataG} cx="20%" cy="50%"innerRadius={40} outerRadius={80} fill="#cd95ed" />
+          <Tooltip />
+        </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <ResponsiveContainer height={250}>
+                  {/* TODO (TASK 21): display the same data as the bar chart using a radar chart */}
+                  {/* Hint: refer to documentation at https://recharts.org/en-US/api/RadarChart */}
+                  {/* Hint: note you can omit the <Legend /> element and only need one Radar element, as compared to the sample in the docs */}
+                  <PieChart width={400} height={400}>
+          
+          <Pie dataKey="value" data={chartDataG} cx="20%" cy="50%" innerRadius={40} outerRadius={80} fill="#82ca9d" />
+          <Tooltip />
+        </PieChart>
+                </ResponsiveContainer>
+              )
+          }
+        </div>
+</Grid>
+</Grid>
       <div>
         
     </div>
 
-      <h2>Results</h2>
+      <h2>Housings By Rank in Neighborhood</h2>
       {/* Notice how similar the DataGrid component is to our LazyTable! What are the differences? */}
       <DataGrid
         rows={data}

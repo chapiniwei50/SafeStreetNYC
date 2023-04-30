@@ -14,11 +14,14 @@ connection.connect((err) => err && console.log(err));
 
 // GET /getlocalcrime
 const getlocalcrime = async function(req, res) {
+  console.log("in get local crime");
   const dataList = [];
   const latitude = req.query.Latitude ?? 0;
-  const longitude = req.query.Logitude ?? 0;
+  const longitude = req.query.Longitude ?? 0;
   const distance = req.query.Distance ?? 0;
-  
+  console.log(latitude);
+  console.log(longitude);
+  console.log(distance);
 
   connection.query(`
     WITH crime_range AS (
@@ -36,6 +39,7 @@ const getlocalcrime = async function(req, res) {
     } else {
       for(let i = 0; i < data.length; i++) {
         let obj = {
+          id: data[i].Crime_Description,
           Crime_Description: data[i].Crime_Description,
           Count: data[i].Count
         }
@@ -129,11 +133,14 @@ const gethospitaltype = async function(req, res) {
 
 // GET /getlocalhospitals
 const getlocalhospitals = async function(req, res) {
+  console.log("get local hospitals");
   const dataList = [];
   const latitude = req.query.Latitude ?? 0;
-  const longitude = req.query.Logitude ?? 0;
+  const longitude = req.query.Longitude ?? 0;
   const distance = req.query.Distance ?? 0;
-
+  console.log(latitude);
+  console.log(longitude);
+  console.log(distance);
   connection.query(`
     WITH hospital_range AS (
       SELECT Facility_Type
@@ -150,6 +157,7 @@ const getlocalhospitals = async function(req, res) {
     } else {
       for(let i = 0; i < data.length; i++) {
         let obj = {
+          id: data[i].Facility_Type,
           Facility_Type: data[i].Facility_Type,
           Count: data[i].Count,
         }
@@ -174,58 +182,59 @@ const getrankhousing = async function(req, res) {
   console.log(neighborhood);
   connection.query(`
   WITH neighborhood_housing AS (
-      SELECT Address, Latitude, Longitude, Sale_Price
-      FROM Property_Sales
-      WHERE Neighborhood LIKE '%${neighborhood}%' AND Sale_Price != 0
-      GROUP BY Latitude, Longitude
+    SELECT DISTINCT Address, Latitude, Longitude, Sale_Price
+    FROM Property_Sales
+    WHERE Neighborhood LIKE  '${neighborhood}' AND Sale_Price != 0
+    GROUP BY Latitude, Longitude
   ),
   rank_temp_crimes AS (
-      SELECT COUNT(N.Address) AS crimes_count, N.Address
-      FROM neighborhood_housing N LEFT JOIN Crimes2 C ON (POW((N.Latitude - (C.Latitude)) * 111320, 2)
-          + POW((N.Longitude - (C.Longitude)) * 84100, 2)) < POW(1000,2)
-      GROUP BY N.Latitude, N.Longitude, N.Address
+    SELECT COUNT(N.Address) AS crimes_count, N.Address
+    FROM neighborhood_housing N LEFT JOIN (SELECT * FROM Crimes3 LIMIT 1000) C ON (POW((N.Latitude - (C.Latitude)) * 111320, 2)
+        + POW((N.Longitude - (C.Longitude)) * 84100, 2)) < POW(1000,2)
+    GROUP BY N.Latitude, N.Longitude, N.Address
   ),
   rank_crimes AS (
-      SELECT *, NTILE(10) OVER (ORDER BY crimes_count DESC) AS group_col
-      FROM rank_temp_crimes
+    SELECT *, NTILE(10) OVER (ORDER BY crimes_count DESC) AS group_col
+    FROM rank_temp_crimes
   ),
   rank_temp_healthcare AS (
-      SELECT COUNT(H.Name) AS healthcare_count, N.Address
-      FROM neighborhood_housing N LEFT JOIN Hospitals H ON (POW((N.Latitude - (H.Latitude)) * 111320, 2)
-          + POW((N.Longitude - (H.Longitude)) * 84100, 2)) < POW(1000,2)
-      GROUP BY N.Latitude, N.Longitude, N.Address
+    SELECT COUNT(H.Name) AS healthcare_count, N.Address
+    FROM neighborhood_housing N LEFT JOIN Hospitals H ON (POW((N.Latitude - (H.Latitude)) * 111320, 2)
+        + POW((N.Longitude - (H.Longitude)) * 84100, 2)) < POW(1000,2)
+    GROUP BY N.Latitude, N.Longitude, N.Address
   ),
   rank_healthcare AS (
-      SELECT *, NTILE(10) OVER (ORDER BY healthcare_count ASC) AS group_col
-      FROM rank_temp_healthcare
+    SELECT *, NTILE(10) OVER (ORDER BY healthcare_count ASC) AS group_col
+    FROM rank_temp_healthcare
   ),
   rank_temp_price AS (
-      SELECT Sale_Price, Address
-      FROM neighborhood_housing
+    SELECT Sale_Price, Address
+    FROM neighborhood_housing
   ),
   rank_price AS(
-      SELECT *, NTILE(10) OVER (ORDER BY Sale_Price DESC) AS group_col
-      FROM rank_temp_price
+    SELECT *, NTILE(10) OVER (ORDER BY Sale_Price DESC) AS group_col
+    FROM rank_temp_price
   )
-  SELECT RC.Address, (RC.group_col * ${safety_weight} + RH.group_col * ${healthcare_weight} + RP.group_col * ${price_weight}) AS Total_Rank,
-        RC.group_col AS rank_crime, RH.group_col AS rank_healthcare, RP.group_col AS rank_price
+  SELECT RC.Address, RC.group_col * (${safety_weight} / (${safety_weight}+${healthcare_weight}+${price_weight})) + RH.group_col * (${healthcare_weight} / (${safety_weight}+${healthcare_weight}+${price_weight})) + RP.group_col * (${price_weight} / (${safety_weight}+${healthcare_weight}+${price_weight})) AS Total_Rank,
+      RC.group_col AS Rank_Crime, RH.group_col AS Rank_Healthcare, RP.group_col AS Rank_Price
   FROM (rank_crimes RC JOIN rank_healthcare RH ON RC.Address = RH.Address)
-          JOIN rank_price RP ON RC.Address = RP.Address
+        JOIN rank_price RP ON RC.Address = RP.Address
   ORDER BY Total_Rank DESC;
+  
     `, (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
       res.json({});
     } else {
       for(let i = 0; i < data.length; i++) {
-        console.log(data[i]);
+      
         let obj = {
           id:  data[i].Address,
           Address: data[i].Address,
           Rank_Address: data[i].Total_Rank,
-          Rank_Crime: data[i].rank_crime,
-          Rank_Healthcare: data[i].rank_healthcare,
-          Rank_Price: data[i].rank_price
+          Rank_Crime: data[i].Rank_Crime,
+          Rank_Healthcare: data[i].Rank_Healthcare,
+          Rank_Price: data[i].Rank_Price
        
         }
         dataList.push(obj);
@@ -244,54 +253,60 @@ const getrankairbnb = async function(req, res) {
   const neighborhood = req.query.Neighborhood;
 
   connection.query(`
-    WITH neighborhood_housing AS (
-      SELECT Property_Id, Latitude, Longitude, (Price + Service_Fee) AS Airbnb_Price
-      FROM Airbnb
-      WHERE UPPER(Neighborhood) LIKE '%${neighborhood}%' AND (Price + Service_Fee) != 0
-      GROUP BY Latitude, Longitude
-    ),
-    rank_temp_crimes AS (
-        SELECT COUNT(N.Property_Id) AS crimes_count, N.Property_Id
-        FROM neighborhood_housing N LEFT JOIN Crimes2 C ON (POW((N.Latitude - (C.Latitude)) * 111320, 2)
-            + POW((N.Longitude - (C.Longitude)) * 84100, 2)) < POW(1000,2)
-        GROUP BY N.Latitude, N.Longitude, N.Property_Id
-    ),
-    rank_crimes AS (
-        SELECT *, NTILE(10) OVER (ORDER BY crimes_count DESC) AS group_col
-        FROM rank_temp_crimes
-    ),
-    rank_temp_healthcare AS (
-        SELECT COUNT(H.Name) AS healthcare_count, N.Property_Id
-        FROM neighborhood_housing N LEFT JOIN Hospitals H ON (POW((N.Latitude - (H.Latitude)) * 111320, 2)
-            + POW((N.Longitude - (H.Longitude)) * 84100, 2)) < POW(1000,2)
-        GROUP BY N.Latitude, N.Longitude, N.Property_Id
-    ),
-    rank_healthcare AS (
-        SELECT *, NTILE(10) OVER (ORDER BY healthcare_count ASC) AS group_col
-        FROM rank_temp_healthcare
-    ),
-    rank_temp_price AS (
-        SELECT Airbnb_Price, Property_Id
-        FROM neighborhood_housing
-    ),
-    rank_price AS(
-        SELECT *, NTILE(10) OVER (ORDER BY Airbnb_Price DESC) AS group_col
-        FROM rank_temp_price
-    )
-    SELECT RC.Property_Id as Property_Id, (RC.group_col * ${safety_weight} + RH.group_col * ${healthcare_weight} + RP.group_col * ${price_weight}) AS Total_Rank,
-          RC.group_col AS Rank_Crime, RH.group_col AS Rank_Healthcare, RP.group_col AS Rank_Price
-    FROM (rank_crimes RC JOIN rank_healthcare RH ON RC.Property_Id = RH.Property_Id)
-            JOIN rank_price RP ON RC.Property_Id = RP.Property_Id
-    ORDER BY Total_Rank DESC;
+  WITH neighborhood_housing AS (
+    SELECT Property_Id, Name, Latitude, Longitude, (Price + Service_Fee) AS Airbnb_Price
+    FROM Airbnb
+    WHERE UPPER(Neighborhood) = '${neighborhood}' AND (Price + Service_Fee) != 0
+    GROUP BY Latitude, Longitude
+),
+rank_temp_crimes AS (
+    SELECT COUNT(N.Property_Id) AS crimes_count, N.Property_Id, N.Name
+    FROM neighborhood_housing N
+    LEFT JOIN (SELECT * FROM Crimes3 LIMIT 1000) C ON (POW((N.Latitude - C.Latitude) * 111320, 2)
+        + POW((N.Longitude - C.Longitude) * 84100, 2)) < POW(1000, 2)
+    GROUP BY N.Latitude, N.Longitude, N.Property_Id
+),
+rank_crimes AS (
+    SELECT *, NTILE(10) OVER (ORDER BY crimes_count DESC) AS group_col
+    FROM rank_temp_crimes
+),
+rank_temp_healthcare AS (
+    SELECT COUNT(H.Name) AS healthcare_count, N.Property_Id
+    FROM neighborhood_housing N
+    LEFT JOIN Hospitals2 H ON (POW((N.Latitude - H.Latitude) * 111320, 2)
+        + POW((N.Longitude - H.Longitude) * 84100, 2)) < POW(1000, 2)
+    GROUP BY N.Latitude, N.Longitude, N.Property_Id
+),
+rank_healthcare AS (
+    SELECT *, NTILE(10) OVER (ORDER BY healthcare_count ASC) AS group_col
+    FROM rank_temp_healthcare
+),
+rank_temp_price AS (
+    SELECT Airbnb_Price, Property_Id
+    FROM neighborhood_housing
+),
+rank_price AS (
+    SELECT *, NTILE(10) OVER (ORDER BY Airbnb_Price DESC) AS group_col
+    FROM rank_temp_price
+)
+SELECT RC.Property_Id, RC.Name as Name, RC.group_col * (${safety_weight} / (${safety_weight}+${healthcare_weight}+${price_weight})) + RH.group_col * (${healthcare_weight} / (${safety_weight}+${healthcare_weight}+${price_weight})) + RP.group_col * (${price_weight} / (${safety_weight}+${healthcare_weight}+${price_weight})) AS Total_Rank,
+       RC.group_col AS Rank_Crime, RH.group_col AS Rank_Healthcare, RP.group_col AS Rank_Price
+FROM rank_crimes RC
+JOIN rank_healthcare RH ON RC.Property_Id = RH.Property_Id
+JOIN rank_price RP ON RC.Property_Id = RP.Property_Id
+ORDER BY Total_Rank DESC;
     `, (err, data) => {
     if (err || data.length === 0) {
       console.log(err);
       res.json({});
     } else {
+
       for(let i = 0; i < data.length; i++) {
         let obj = {
-          Property_Id: data[i].Property_Id,
-          Rank_Address: data[i].Rank_Address,
+          id: data[i].Property_Id,
+         
+          Name: data[i].Name,
+          Total_Rank: data[i].Total_Rank,
           Rank_Crime: data[i].Rank_Crime,
           Rank_Healthcare: data[i].Rank_Healthcare,
           Rank_Price: data[i].Rank_Price
@@ -303,11 +318,162 @@ const getrankairbnb = async function(req, res) {
   });
 }
 
+const findsimilarbypricecrimeborough = async function(req, res) {
+  const property = req.query.Property ?? 0;
+  console.log("find similar");
+  dataList =[];
+  console.log(property);
+  connection.query(`
+    SELECT
+      A2.Name, A2.Property_id, A2.Price, A2.Room_Type, AVG(A3.Price) AS Avg_Neighborhood_Price,
+      CrimeStats.Crime_Count, HospitalStats.Hospital_Count
+    FROM
+      Airbnb A1
+    JOIN
+      Airbnb A2 ON A1.Neighborhood = A2.Neighborhood
+      AND A2.Price BETWEEN A1.Price * 0.9 AND A1.Price * 1.1
+      AND A2.Property_id <> A1.Property_id
+    JOIN
+      Airbnb A3 ON A2.Neighborhood = A3.Neighborhood
+    JOIN
+      (SELECT Borough, COUNT(*) AS Crime_Count FROM Crimes GROUP BY Borough) CrimeStats ON A2.Borough = CrimeStats.Borough
+    JOIN
+      (SELECT Borough, COUNT(*) AS Hospital_Count FROM Hospitals GROUP BY Borough) HospitalStats ON A2.Borough = HospitalStats.Borough
+    WHERE
+      A1.Property_id = ${property}
+    GROUP BY
+      A2.Property_id, A2.Price, A2.Room_Type, CrimeStats.Crime_Count, HospitalStats.Hospital_Count;
+    `, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+      for(let i = 0; i < data.length; i++) {
+        let obj = {
+          id: data[i].Property_id,
+          Name: data[i].Name,
+          Room_Type: data[i].Room_Type,
+          Price: data[i].Price,
+          Avg_Neighborhood_Price: data[i].Avg_Neighborhood_Price,
+          Crime_Count: data[i].Crime_Count,
+          Hospital_Count: data[i].Hospital_Count
+        }
+        dataList.push(obj);
+      }
+      
+      res.json(dataList);
+    }
+  });
+}
+const getavailablerooms = async function(req, res) {
+  console.log("in get available rooms")
+  const neighborhood = req.query.neighborhood ?? 0;
+  const dataList = [];
+  connection.query(`
+    SELECT
+      a.Room_Type,
+      COUNT(a.Room_Type) AS Room_Count,
+      AVG(a.Instant_Bookable) AS Instant_Bookability_Ratio
+    FROM
+      Airbnb AS a
+      JOIN ZIP_Code_Neighborhood AS n ON a.Neighborhood LIKE CONCAT('%', n.Neighborhood, '%')
+    WHERE
+      n.Neighborhood = ${neighborhood}
+    GROUP BY
+      a.Room_Type
+    ORDER BY
+      Room_Count DESC;
+    `, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+
+      for(let i = 0; i < data.length; i++) {
+
+  
+        let obj = {
+          id: data[i].Room_Type,
+          Room_Type: data[i].Room_Type,
+          Room_Count: data[i].Room_Count,
+          Instant_Bookability_Ratio: data[i].Instant_Bookability_Ratio
+        }
+        dataList.push(obj);
+      }
+      res.json(dataList);
+    }
+  });
+}
+// GET /getAvgPercentagePrice
+const getAvgPercentagePrice = async function(req, res) {
+  const dataList = [];
+  const neighborhood = req.query.Neighborhood;
+  console.log("get average");
+  console.log(neighborhood);
+
+  connection.query(`
+    WITH airbnb_price AS (
+        SELECT AVG(Service_Fee + Price) AS APrice, Neighborhood
+        FROM Airbnb
+        GROUP BY Neighborhood
+    ),
+    housing_price AS (
+        SELECT (AVG(Sale_Price))/1000 AS HPrice, Neighborhood
+        FROM Property_Sales
+        GROUP BY Neighborhood
+    ),
+    temp_combine_price AS (
+        SELECT APrice, HPrice, airbnb_price.Neighborhood AS ANeighbor, housing_price.Neighborhood AS HNeighbor
+        FROM airbnb_price
+        LEFT JOIN housing_price ON UPPER(airbnb_price.Neighborhood) = UPPER(housing_price.Neighborhood)
+        UNION
+        SELECT APrice, HPrice, airbnb_price.Neighborhood AS ANeighbor, housing_price.Neighborhood AS HNeighbor
+        FROM airbnb_price
+        RIGHT JOIN housing_price ON UPPER(airbnb_price.Neighborhood) = UPPER(housing_price.Neighborhood)
+    ),
+    combine_price AS (
+        SELECT APrice, HPrice, COALESCE(UPPER(ANeighbor), UPPER(HNeighbor)) AS Total_Neighbor
+        FROM temp_combine_price
+    ),
+    avg_price AS (
+        SELECT AVG(COALESCE(APrice, 0) + COALESCE(HPrice, 0)) AS Avg_Price, COUNT(*) AS Neighborhood_Length
+        FROM combine_price
+    )
+    SELECT ((((COALESCE(C.APrice, 0) + COALESCE(C.HPrice, 0)) - A.Avg_Price) / Neighborhood_Length) * 100)
+        AS AVG_Price_Percentage, Total_Neighbor
+    FROM combine_price C, avg_price A
+    WHERE Total_Neighbor = UPPER('${neighborhood}');
+    `, (err, data) => {
+    if (err || data.length === 0) {
+      console.log(err);
+      res.json({});
+    } else {
+     
+      for(let i = 0; i < data.length; i++) {
+        let obj = {
+          Neighborhood: data[i].Total_Neighbor,
+          AVG_Price_Percentage: data[i].AVG_Price_Percentage
+        }
+        dataList.push(obj);
+      } 
+      console.log(dataList)
+      res.json(dataList);
+    }
+  });
+}
+
+
+
 module.exports = {
   getlocalcrime,
   getneighborhooddemographics,
   gethospitaltype,
   getlocalhospitals,
   getrankhousing,
-  getrankairbnb
+  getrankairbnb,
+  findsimilarbypricecrimeborough,
+  getavailablerooms,
+  getAvgPercentagePrice
+
+
 }

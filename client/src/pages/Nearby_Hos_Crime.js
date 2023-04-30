@@ -15,14 +15,15 @@ const config = require('../config.json');
 export default function SongsPage() {
   const [pageSize, setPageSize] = useState(10);
   const [data, setData] = useState([]);
+  const [dataC, setDataC] = useState([]);
   // const [selectedNeighborhood, setSelectedNeighborhood] = useState(null);
 
   const [address, setAddress] = useState('');
  
-  const [distance, setDistance] = useState(3);
+  const [distance, setDistance] = useState(700);
 
-  const longitude = 1;
-  const latitude = 2;
+
+  ;
   function Map(props) {
     useEffect(() => {
       // Load the Google Maps API script
@@ -93,19 +94,46 @@ export default function SongsPage() {
 
 //!!!!!!!!!!!!!GET LONGITUDE LATITUDE!!!!!!!!!!!!!
 
-  const search = () => {
-    console.log("search")
-    
-    fetch(`http://${config.server_host}:${config.server_port}/getlocalhospitals?Distance=${distance}`
-    `Longitude=${longitude}` +
-    `&Latitude${latitude}` 
+
+
+
+  const search = async () => {
+    console.log("search");
+ 
+  // Get latitude and longitude
+  const latLng = await getLatLng(address);
+ if (!latLng) {
+  console.log("Unable to find latitude and longitude for the provided address.");
+  return;
+  }
+  
+  console.log(latLng);
+  
+  fetch(
+  `http://${config.server_host}:${config.server_port}/getlocalhospitals?Distance=${distance}` +
+  `&Longitude=${latLng.lng}` +
+  `&Latitude=${latLng.lat}`
+  )
+  .then((res) => res.json())
+  .then((hospitals) => {
+  console.log(hospitals);
+  console.log("effect here");
+  setData(hospitals);
+  console.log(data);
+  });
+      fetch(`http://${config.server_host}:${config.server_port}/getlocalcrime?Distance=${distance}` +
+    `&Longitude=${latLng.lng}` +
+    `&Latitude=${latLng.lat}` 
     )
       .then(res => res.json())
-      .then(hospitals => {
-        console.log(hospitals);
+      .then(crimes => {
+        console.log(crimes);
         console.log("effect here")
-        setData(hospitals);
-        console.log(data);
+        for(let i = 0; i < crimes.length; i++){
+
+        }
+        setDataC(crimes);
+        console.log(dataC);
       });
   }
 
@@ -118,14 +146,37 @@ export default function SongsPage() {
     // { field: 'neighborhood', headerName: 'Neighborhood', width: 300, renderCell: (params) => (
     //     <Link onClick={() => setSelectedNeighborhood(params.row.song_id)}>{params.value}</Link>
     // ) },
-    { field: 'Name', headerName: 'Name', width: 400 },
-    { field: 'Location', headerName: 'Location', width: 300 },
-    { field: 'Phone', headerName: 'Phone', width: 300 },
+    { field: 'Facility_Type', headerName: 'Hospital Type', width: 400 },
+    { field: 'Count', headerName: 'Count', width: 300 },
+    
+  ]
+
+  const columnsC = [
+    // { field: 'neighborhood', headerName: 'Neighborhood', width: 300, renderCell: (params) => (
+    //     <Link onClick={() => setSelectedNeighborhood(params.row.song_id)}>{params.value}</Link>
+    // ) },
+    { field: 'Crime_Description', headerName: 'Crime Type', width: 400 },
+    { field: 'Count', headerName: 'Count', width: 300 },
     
   ]
   
   
   const apikey = 'AIzaSyBiQxXOFhKyV-xlXCyFoBAIgshY5UhM7i8';
+
+  const getLatLng = async (address) => {
+    const response = await fetch(
+    `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+    address
+    )}&key=${config.apiKey}`
+  );
+    const data = await response.json();
+    if (data.results && data.results.length > 0) {
+    const location = data.results[0].geometry.location;
+    return { lat: location.lat, lng: location.lng };
+    } else {
+      return null;
+    }
+    };
 
   // This component makes uses of the Grid component from MUI (https://mui.com/material-ui/react-grid/).
   // The Grid component is super simple way to create a page layout. Simply make a <Grid container> tag
@@ -144,7 +195,18 @@ export default function SongsPage() {
           <TextField label='address' value={address} onChange={(e) => setAddress(e.target.value)} style={{ width: "100%" }}/>
         </Grid>
         
-       
+        <Grid item xs={4}>
+          <p>Distance</p>
+          <Slider
+            value={distance}
+            min={500}
+            max={2000}
+            step={100}
+            onChange={(e, newValue) => setDistance(newValue)}
+            valueLabelDisplay='auto'
+            valueLabelFormat={value => <div>{value}</div>}
+          />
+        </Grid>
         {/* TODO (TASK 24): add sliders for danceability, energy, and valence (they should be all in the same row of the Grid) */}
         {/* Hint: consider what value xs should be to make them fit on the same row. Set max, min, and a reasonable step. Is valueLabelFormat is necessary? */}
        
@@ -159,11 +221,22 @@ export default function SongsPage() {
       {/* <div><h1>My Map</h1><Map apikey ={apikey}/></div> */}
 
 
-      <h2>Results</h2>
+      <h2>Nearby Hospital Types</h2>
       {/* Notice how similar the DataGrid component is to our LazyTable! What are the differences? */}
       <DataGrid
         rows={data}
         columns={columns}
+        pageSize={pageSize}
+        rowsPerPageOptions={[5, 10, 25]}
+        onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+        autoHeight
+      />
+
+<h2>Nearby Crimes Types</h2>
+      {/* Notice how similar the DataGrid component is to our LazyTable! What are the differences? */}
+      <DataGrid
+        rows={dataC}
+        columns={columnsC}
         pageSize={pageSize}
         rowsPerPageOptions={[5, 10, 25]}
         onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}

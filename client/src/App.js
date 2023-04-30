@@ -4,12 +4,13 @@ import { indigo, amber } from '@mui/material/colors'
 import { createTheme } from "@mui/material/styles";
 
 import NavBar from './components/NavBar';
-import HomePage from './pages/HomePage';
-import AlbumsPage from './pages/AlbumsPage';
-import SongsPage from './pages/SongsPage';
-import AlbumInfoPage from './pages/AlbumInfoPage'
+import LoginPage from './pages/Login';
+import AirbnbPage from './pages/Airbnb'
+import HousingPage from './pages/Housing'
 import HospitalPage from './pages/hospitals'
 import NearbyPage from './pages/Nearby_Hos_Crime'
+import SignUpPage from './pages/Signup';
+import LogoutPage from './pages/Logout';
 
 // createTheme enables you to customize the look and feel of your app past the default
 // in this case, we only change the color scheme
@@ -31,12 +32,13 @@ export default function App() {
       <BrowserRouter>
         <NavBar />
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/albums" element={<AlbumsPage />} />
-          <Route path="/albums/:album_id" element={<AlbumInfoPage />} />
-          <Route path="/songs" element={<SongsPage />} />
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/airbnb" element={<AirbnbPage />} />
+          <Route path="/housing" element={<HousingPage />} />
           <Route path="/hospitals" element={<HospitalPage />} />
           <Route path="/nearby" element={<NearbyPage />} />
+          <Route path="/renderSignup" element={<SignUpPage />} />
+          <Route path="/logout" element={<LogoutPage />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

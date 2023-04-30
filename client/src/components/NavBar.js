@@ -10,7 +10,7 @@ const NavText = ({ href, text, isMain }) => {
       noWrap
       style={{
         marginRight: '30px',
-        fontFamily: 'Impact',
+        fontFamily: 'Gill Sans',
         fontWeight: 700,
         letterSpacing: '.3rem',
       }}
@@ -36,11 +36,12 @@ export default function NavBar() {
     <AppBar position='static'>
       <Container maxWidth='xl'>
         <Toolbar disableGutters>
-          <NavText href='/' text='NYC-HOUSING&SAFETY' isMain />
-          <NavText href='/albums' text='AIRBNB' />
-          <NavText href='/songs' text='HOUSINGS' />
+          <NavText href='/housing' text='SafeStreetNYC' isMain />
+          <NavText href='/airbnb' text='AIRBNB' />
+          <NavText href='/housing' text='HOUSINGS' />
           <NavText href='/hospitals' text='HOSPITALS' />
           <NavText href='/nearby' text='NEARBY HOSPITALS&CRIME' />
+          <NavText href='/logout' text='LOGOUT' />
         </Toolbar>
       </Container>
     </AppBar>
