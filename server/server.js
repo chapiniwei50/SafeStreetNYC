@@ -2,10 +2,20 @@ const express = require('express');
 const cors = require('cors');
 const config = require('./config');
 const routes = require('./routes');
+const routesDDB = require('./routesDDB');
+const bodyParser = require('body-parser');
 
 const app = express();
 app.use(cors({
   origin: '*',
+}));
+
+var session = require('express-session');
+app.use(session({
+   secret: 'loginSecret',
+   resave: false,
+   saveUnitialized: true,
+   cookie: { secure: false }
 }));
 
 // We use express to define our various API endpoints and
@@ -14,8 +24,22 @@ app.get('/getlocalcrime', routes.getlocalcrime);
 app.get('/getneighborhooddemographics/:neighborhood', routes.getneighborhooddemographics);
 app.get('/gethospitaltype', routes.gethospitaltype);
 app.get('/getlocalhospitals', routes.getlocalhospitals);
+app.get('/getrankhousing', routes.getrankhousing);
+app.get('/getrankairbnb', routes.getrankairbnb);
+app.use(bodyParser.json());
+app.post('/authenticator', routesDDB.verifyUser);
+app.post('/addUser', routesDDB.addUser);
+app.post('/externalAuthenticator', routesDDB.verifyExternalUser);
 
-app.get('/authenticator', routesDDB.postResultsUser);
+// app.get('/author/:type', routes.author);
+// app.get('/random', routes.random);
+// app.get('/song/:song_id', routes.song);
+// app.get('/album/:album_id', routes.album);
+// app.get('/albums', routes.albums);
+// app.get('/album_songs/:album_id', routes.album_songs);
+// app.get('/top_songs', routes.top_songs);
+// app.get('/top_albums', routes.top_albums);
+// app.get('/search_songs', routes.search_songs);
 
 
 app.listen(config.server_port, () => {

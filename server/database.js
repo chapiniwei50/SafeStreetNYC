@@ -1,8 +1,8 @@
 var AWS = require('aws-sdk');
 AWS.config.update({ 
     region: 'us-east-1',
-    accessKeyId: '',
-    secretAccessKey: ''
+    accessKeyId: 'AKIAUFTWIGAVYHESOC5V',
+    secretAccessKey: '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'
  });
 var db = new AWS.DynamoDB();
 
@@ -10,12 +10,12 @@ var db = new AWS.DynamoDB();
 var myDB_getPassword = function (searchTerm, callback) {
   var params = {
     KeyConditions: {
-      username: {
+      email: {
         ComparisonOperator: 'EQ',
         AttributeValueList: [{ S: searchTerm }]
       }
     },
-    TableName: "users",
+    TableName: "accounts",
     AttributesToGet: ['password']
   };
 
@@ -28,24 +28,24 @@ var myDB_getPassword = function (searchTerm, callback) {
   });
 }
 
-//gets username input and returns the username if existing
-var myDB_getUsername = function (searchTerm, language, callback) {
+//gets email input and returns the username if existing
+var myDB_getEmail = function (searchTerm, language, callback) {
   var params = {
     KeyConditions: {
-      username: {
+      email: {
         ComparisonOperator: 'EQ',
         AttributeValueList: [{ S: searchTerm }]
       }
     },
-    TableName: "users",
-    AttributesToGet: ['username']
+    TableName: "accounts",
+    AttributesToGet: ['email']
   };
 
   db.query(params, function (err, data) {
     if (err || data.Items.length == 0) {
       callback(err, null);
     } else {
-      callback(err, data.Items[0].username.S);
+      callback(err, data.Items[0].email.S);
     }
   });
 }
@@ -54,11 +54,11 @@ var myDB_getUsername = function (searchTerm, language, callback) {
 var myDB_userInfo = function (searchTerm, language, callback) {
   var params = {
     Key: {
-      "username": {
+      "email": {
         S: searchTerm
       }
     },
-    TableName: "users"
+    TableName: "accounts"
   };
   db.getItem(params, function (err, data) {
     if (err) {
@@ -72,29 +72,14 @@ var myDB_userInfo = function (searchTerm, language, callback) {
 
 //create a new account with the right db parameters
 var myDB_createAccount =
-  function (newUsername, newPassword, newFullname, newAffiliation,
-    newEmail, newBirthday, newInterest, newPfpURL, callback) {
-
-    var interestArr = [];
-    for (let i = 0; i < newInterest.length; i++) {
-      var newIt =
-      {
-        "S": newInterest[i]
-      }
-      interestArr.push(newIt);
-    }
-
+  function (newUsername, newPassword, 
+    newEmail, callback) {
     var params = {
-      TableName: "users",
+      TableName: "accounts",
       Item: {
         "username": { S: newUsername },
-        "affiliation": { S: newAffiliation },
-        "birthday": { S: newBirthday },
         "email": { S: newEmail },
-        "fullname": { S: newFullname },
-        "interest": { L: interestArr },
         "password": { S: newPassword },
-        "pfpURL": { S: newPfpURL }
       }
     };
 
@@ -105,11 +90,9 @@ var myDB_createAccount =
     });
   }
 
-var database = {
+module.exports = {
   passwordLookup: myDB_getPassword,
-  usernameLookup: myDB_getUsername,
+  emailLookup: myDB_getEmail,
   createAccount: myDB_createAccount,
   getUserInfo: myDB_userInfo
 };
-
-module.exports = database;

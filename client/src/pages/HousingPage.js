@@ -23,7 +23,7 @@ export default function SongsPage() {
     useEffect(() => {
       // Load the Google Maps API script
       const script = document.createElement("script");
-      script.src = ``;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyBiQxXOFhKyV-xlXCyFoBAIgshY5UhM7i8&callback=initMap`;
       script.async = true;
       document.body.appendChild(script);
   
@@ -127,7 +127,7 @@ export default function SongsPage() {
 
 
   
-  const apikey = '';
+  const apikey = 'AIzaSyBiQxXOFhKyV-xlXCyFoBAIgshY5UhM7i8';
 
   // This component makes uses of the Grid component from MUI (https://mui.com/material-ui/react-grid/).
   // The Grid component is super simple way to create a page layout. Simply make a <Grid container> tag

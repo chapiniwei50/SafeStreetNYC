@@ -67,7 +67,7 @@ function Login() {
           <NavLink to={`/renderSignup`}>Create An Account</NavLink>
         </form>
         <FacebookLogin
-            appId=""
+            appId="565926408857053"
             fields="name,email,picture"
             callback={responseFacebook}
           />
@@ -75,7 +75,7 @@ function Login() {
           <br />
 
           <GoogleLogin
-            clientId=""
+            clientId="957151383391-tkmpig0qbup955u8oabk9hji7o7old6p.apps.googleusercontent.com"
             buttonText="LOGIN WITH GOOGLE"
             onSuccess={responseGoogle}
             onFailure={responseGoogle}
