@@ -18,7 +18,7 @@ npm start
 Server Terminal:
 
 ```
-cd Server
+cd server
 npm install
 npm start
 ```
