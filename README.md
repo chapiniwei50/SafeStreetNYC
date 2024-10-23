@@ -3,6 +3,9 @@
 - Nathan Chen (DB, Documentation), Abhinav Gopinath (DB), Jiwoong Matt Park (Backend, DB, Markdown), Cindy Wei (Frontend)
 - 2023.03.20 ~ 2023.05.11
 
+## Demo Youtube Video
+https://www.youtube.com/watch?v=p8X7T2L7yPg
+
 ## How to Run the Program
 
 In order to run the code, open two terminals and access the code file. These are the npm that you have to install for each terminal on the client and server side
